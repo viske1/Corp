@@ -72,7 +72,7 @@ const BASE_DELAY = 350;
 // Tune this if the available width or font-size changes.
 const CHARS_PER_LINE = 52;
 const LINE_HEIGHT_PX = 28;
-const PANEL_PADDING_PX = 16;
+const PANEL_PADDING_PX = 28;
 
 const estimateLines = (text: string) =>
   Math.max(1, Math.ceil(text.length / CHARS_PER_LINE));
@@ -140,8 +140,19 @@ export function CVView() {
   const [icons, setIcons] = useState<ItemIcon[]>(() =>
     EXPERIENCES.map(() => "spinner"),
   );
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
+    () => new Set(),
+  );
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const toggleSelected = (i: number) => {
+    setSelectedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  };
 
   // Reset to all spinners whenever we close
   useEffect(() => {
@@ -149,7 +160,7 @@ export function CVView() {
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
       setIcons(EXPERIENCES.map(() => "spinner"));
-      setSelectedIndex(null);
+      setSelectedIndices(new Set());
     }
   }, [isOpen]);
 
@@ -197,7 +208,7 @@ export function CVView() {
 
   return (
     <div
-      className="fixed inset-0 z-20 flex items-center justify-center px-4 pointer-events-none"
+      className="fixed inset-0 z-20 overflow-y-auto pointer-events-none"
       style={{
         opacity: isOpen ? 1 : 0,
         transition: isOpen
@@ -206,13 +217,13 @@ export function CVView() {
         pointerEvents: isOpen ? "auto" : "none",
       }}
     >
-      <div className="w-full max-w-md flex flex-col">
+      <div className="w-full max-w-md mx-auto px-4 pt-[180px] pb-[180px] flex flex-col gap-1">
         {EXPERIENCES.map((exp, i) => {
           const enterDelay = BASE_DELAY + i * ITEM_STAGGER;
           const exitDelay = (EXPERIENCES.length - 1 - i) * 30;
           const icon = icons[i];
 
-          const isSelected = selectedIndex === i;
+          const isSelected = selectedIndices.has(i);
           // Estimate visual lines from char count, since CodeLine wraps long phrases.
           const panelHeight = computePanelHeight(exp.description);
           return (
@@ -229,103 +240,102 @@ export function CVView() {
               }}
             >
               <div
-                onClick={() => setSelectedIndex(isSelected ? null : i)}
-                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto border-[0.5px] ${
+                onClick={() => toggleSelected(i)}
+                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto ${
                   isSelected
-                    ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30 border-neutrallight-300 dark:border-borderdark-900"
-                    : "border-transparent hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30"
+                    ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30"
+                    : "hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30"
                 }`}
                 style={{
-                  transition: isSelected
-                    ? `background-color 200ms ${easing}, border-color 320ms ${smoothEasing} 250ms`
-                    : `background-color 200ms ${easing}, border-color 200ms ${easing}`,
+                  transition: `background-color 200ms ${easing}`,
                 }}
+                // Border commented out for testing
+                // className+= " border-[0.5px] border-neutrallight-300 dark:border-borderdark-900"
               >
                 <div className="flex items-center gap-3">
-                {/* Icon area — morphs from spinner to diploma/job */}
-                <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
-                  {/* Spinner layer */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      opacity: icon === "spinner" ? 1 : 0,
-                      transform: icon === "spinner" ? "scale(1)" : "scale(0)",
-                      transition: `opacity 180ms ${easing}, transform 220ms ${easing}`,
-                    }}
-                  >
-                    <SpinnerLoader size="sm" colorScheme="neutral" />
+                  {/* Icon area — morphs from spinner to diploma/job */}
+                  <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
+                    {/* Spinner layer */}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        opacity: icon === "spinner" ? 1 : 0,
+                        transform: icon === "spinner" ? "scale(1)" : "scale(0)",
+                        transition: `opacity 180ms ${easing}, transform 220ms ${easing}`,
+                      }}
+                    >
+                      <SpinnerLoader size="sm" colorScheme="neutral" />
+                    </div>
+
+                    {/* Diploma layer */}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        opacity: icon === "diploma" ? 1 : 0,
+                        transform: icon === "diploma" ? "scale(1)" : "scale(0)",
+                        transition:
+                          icon === "diploma"
+                            ? `opacity 220ms ${easing} 80ms, transform 280ms ${easing} 80ms`
+                            : `opacity 180ms ${easing}, transform 220ms ${easing}`,
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/CorpIcon/diploma.svg"
+                        alt="Formation"
+                        className="w-4 h-4 custom-icon"
+                      />
+                    </div>
+
+                    {/* Job layer */}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        opacity: icon === "job" ? 1 : 0,
+                        transform: icon === "job" ? "scale(1)" : "scale(0)",
+                        transition:
+                          icon === "job"
+                            ? `opacity 220ms ${easing} 80ms, transform 280ms ${easing} 80ms`
+                            : `opacity 180ms ${easing}, transform 220ms ${easing}`,
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/CorpIcon/job.svg"
+                        alt="Expérience"
+                        className="w-4 h-4 custom-icon"
+                      />
+                    </div>
                   </div>
 
-                  {/* Diploma layer */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      opacity: icon === "diploma" ? 1 : 0,
-                      transform: icon === "diploma" ? "scale(1)" : "scale(0)",
-                      transition:
-                        icon === "diploma"
-                          ? `opacity 220ms ${easing} 80ms, transform 280ms ${easing} 80ms`
-                          : `opacity 180ms ${easing}, transform 220ms ${easing}`,
-                    }}
+                  {/* Title — center */}
+                  <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-900 dark:text-neutraldark-900 truncate">
+                    {exp.title}
+                  </p>
+
+                  {/* Date — right */}
+                  <span
+                    className="shrink-0 text-[12px] font-medium tracking-[-0.1px] text-neutrallight-600 dark:text-neutraldark-600 tabular-nums"
+                    style={{ fontFamily: "var(--font-jetbrains-mono)" }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/CorpIcon/diploma.svg"
-                      alt="Formation"
-                      className="w-4 h-4 custom-icon"
-                    />
-                  </div>
+                    {exp.period}
+                  </span>
 
-                  {/* Job layer */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
+                  {/* Chevron down — far right */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/CorpIcon/chevron_down.svg"
+                    alt=""
+                    className="shrink-0 w-3.5 h-3.5 custom-icon opacity-60"
                     style={{
-                      opacity: icon === "job" ? 1 : 0,
-                      transform: icon === "job" ? "scale(1)" : "scale(0)",
-                      transition:
-                        icon === "job"
-                          ? `opacity 220ms ${easing} 80ms, transform 280ms ${easing} 80ms`
-                          : `opacity 180ms ${easing}, transform 220ms ${easing}`,
+                      transform: isSelected ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: `transform 200ms ${easing}`,
                     }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/CorpIcon/job.svg"
-                      alt="Expérience"
-                      className="w-4 h-4 custom-icon"
-                    />
-                  </div>
-                </div>
-
-                {/* Title — center */}
-                <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-900 dark:text-neutraldark-900 truncate">
-                  {exp.title}
-                </p>
-
-                {/* Date — right */}
-                <span
-                  className="shrink-0 text-[12px] font-medium tracking-[-0.1px] text-neutrallight-600 dark:text-neutraldark-600 tabular-nums"
-                  style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-                >
-                  {exp.period}
-                </span>
-
-                {/* Chevron down — far right */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/CorpIcon/chevron_down.svg"
-                  alt=""
-                  className="shrink-0 w-3.5 h-3.5 custom-icon opacity-60"
-                  style={{
-                    transform: isSelected ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: `transform 200ms ${easing}`,
-                  }}
-                />
+                  />
                 </div>
 
                 {/* Expansion panel — snippet wrapping the CodeBlock, inside the same clickable div */}
                 <div
-                  className="overflow-hidden"
                   style={{
                     maxHeight: isSelected ? panelHeight + 24 : 0,
                     opacity: isSelected ? 1 : 0,
@@ -335,7 +345,7 @@ export function CVView() {
                   }}
                 >
                   {/* Splitter between header and content — animates width from center */}
-                  <div className="mt-2 mb-2 -mx-2 h-[0.5px] flex justify-center">
+                  {/* <div className="mt-2 mb-2 -mx-2 h-[0.5px] flex justify-center">
                     <div
                       className="h-full bg-neutrallight-300 dark:bg-borderdark-900"
                       style={{
@@ -346,8 +356,8 @@ export function CVView() {
                           : `width 200ms ${easing}, opacity 150ms ${easing}`,
                       }}
                     />
-                  </div>
-                  <div className="px-1 pb-1 overflow-hidden">
+                  </div> */}
+                  <div className="px-2 pt-4 pb-3 overflow-hidden">
                     <CodeBlock
                       lines={exp.description}
                       startLineNumber={1}

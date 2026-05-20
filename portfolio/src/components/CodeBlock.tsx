@@ -54,7 +54,11 @@ export function CodeBlock({
           hideActionButton={hideActionButton}
           numberWidth={numberWidth}
           enterDelayMs={
-            cascade ? cascadeBaseDelay + i * cascadeStagger : undefined
+            cascade
+              ? cascadeVisible
+                ? cascadeBaseDelay + i * cascadeStagger
+                : (lines.length - 1 - i) * cascadeStagger
+              : undefined
           }
           visible={cascade ? cascadeVisible : true}
           onMeasure={(count) => {
