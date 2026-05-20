@@ -6,6 +6,8 @@ import { SpinnerLoader } from "./SpinnerLoader";
 import { CodeBlock } from "./CodeBlock";
 
 const easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+// Aggressive decel near the end — smooth landing
+const smoothEasing = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 type Experience = {
   title: string;
@@ -65,6 +67,20 @@ const EXPERIENCES: Experience[] = [
 
 const ITEM_STAGGER = 60;
 const BASE_DELAY = 350;
+
+// Used to estimate how many visual lines each description text will wrap to.
+// Tune this if the available width or font-size changes.
+const CHARS_PER_LINE = 52;
+const LINE_HEIGHT_PX = 28;
+const PANEL_PADDING_PX = 16;
+
+const estimateLines = (text: string) =>
+  Math.max(1, Math.ceil(text.length / CHARS_PER_LINE));
+
+const computePanelHeight = (lines: string[]) => {
+  const totalVisualLines = lines.reduce((sum, l) => sum + estimateLines(l), 0);
+  return totalVisualLines * LINE_HEIGHT_PX + PANEL_PADDING_PX;
+};
 
 const ENTRY_TOTAL = BASE_DELAY + (EXPERIENCES.length - 1) * ITEM_STAGGER + 400;
 const FIRST_WAVE_DELAY = 500; // ms after entry finishes
@@ -197,8 +213,8 @@ export function CVView() {
           const icon = icons[i];
 
           const isSelected = selectedIndex === i;
-          // Approximate panel height: 8px top padding + N lines * 28px + 8px bottom
-          const panelHeight = exp.description.length * 28 + 16;
+          // Estimate visual lines from char count, since CodeLine wraps long phrases.
+          const panelHeight = computePanelHeight(exp.description);
           return (
             <div
               key={exp.title}
@@ -214,11 +230,16 @@ export function CVView() {
             >
               <div
                 onClick={() => setSelectedIndex(isSelected ? null : i)}
-                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto border-[0.5px] transition-[background-color,border-color] duration-200 ${
+                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto border-[0.5px] ${
                   isSelected
                     ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30 border-neutrallight-300 dark:border-borderdark-900"
                     : "border-transparent hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30"
                 }`}
+                style={{
+                  transition: isSelected
+                    ? `background-color 200ms ${easing}, border-color 320ms ${smoothEasing} 250ms`
+                    : `background-color 200ms ${easing}, border-color 200ms ${easing}`,
+                }}
               >
                 <div className="flex items-center gap-3">
                 {/* Icon area — morphs from spinner to diploma/job */}
@@ -308,10 +329,9 @@ export function CVView() {
                   style={{
                     maxHeight: isSelected ? panelHeight + 24 : 0,
                     opacity: isSelected ? 1 : 0,
-                    filter: isSelected ? "blur(0px)" : "blur(4px)",
                     transition: isSelected
-                      ? `max-height 320ms ${easing}, opacity 300ms ${easing} 200ms, filter 300ms ${easing} 200ms`
-                      : `max-height 250ms ${easing} 80ms, opacity 180ms ${easing}, filter 180ms ${easing}`,
+                      ? `max-height 480ms ${smoothEasing}, opacity 150ms ${smoothEasing}`
+                      : `max-height 300ms ${easing} 80ms, opacity 200ms ${easing}`,
                   }}
                 >
                   {/* Splitter between header and content — animates width from center */}
@@ -322,7 +342,7 @@ export function CVView() {
                         width: isSelected ? 448 : 0,
                         opacity: isSelected ? 1 : 0,
                         transition: isSelected
-                          ? `width 320ms ${easing} 150ms, opacity 250ms ${easing} 150ms`
+                          ? `width 320ms ${smoothEasing} 250ms, opacity 250ms ${smoothEasing} 250ms`
                           : `width 200ms ${easing}, opacity 150ms ${easing}`,
                       }}
                     />
@@ -334,6 +354,10 @@ export function CVView() {
                       hideStatusBar
                       hideActionButton
                       numberWidth={20}
+                      cascade
+                      cascadeVisible={isSelected}
+                      cascadeBaseDelay={100}
+                      cascadeStagger={45}
                     />
                   </div>
                 </div>

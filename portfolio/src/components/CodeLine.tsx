@@ -16,6 +16,8 @@ type CodeLineProps = {
   hideStatusBar?: boolean;
   hideActionButton?: boolean;
   numberWidth?: number;
+  enterDelayMs?: number;
+  visible?: boolean;
 };
 
 const LINE_HEIGHT = 28;
@@ -120,6 +122,8 @@ export function CodeLine({
   hideStatusBar = false,
   hideActionButton = false,
   numberWidth,
+  enterDelayMs,
+  visible = true,
 }: CodeLineProps) {
   const [status, setStatus] = useState<LineStatus>(initialStatus);
   const [hover, setHover] = useState(false);
@@ -186,6 +190,9 @@ export function CodeLine({
     setOpen(false);
   };
 
+  const hasEnterAnim = enterDelayMs != null;
+  const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+
   return (
     <div
       onMouseEnter={() => setHover(true)}
@@ -193,6 +200,18 @@ export function CodeLine({
       className={`group relative flex items-stretch gap-3 -mx-3 px-3 transition-[margin,background-color] duration-200  ${
         status !== "default" ? "my-2" : ""
       }`}
+      style={
+        hasEnterAnim
+          ? {
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateY(0)" : "translateY(-6px)",
+              filter: visible ? "blur(0px)" : "blur(3px)",
+              transition: visible
+                ? `opacity 300ms ${easing} ${enterDelayMs}ms, transform 350ms ${easing} ${enterDelayMs}ms, filter 300ms ${easing} ${enterDelayMs}ms`
+                : `opacity 150ms ${easing}, transform 200ms ${easing}, filter 150ms ${easing}`,
+            }
+          : undefined
+      }
     >
       {/* Gutter: numbers (with status bg) + status bar */}
       <div className="flex shrink-0 select-none">

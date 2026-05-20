@@ -9,6 +9,14 @@ type CodeBlockProps = {
   hideStatusBar?: boolean;
   hideActionButton?: boolean;
   numberWidth?: number;
+  /** When true, each line stagger-fades in. */
+  cascade?: boolean;
+  /** Whether the cascade should reveal the lines (true) or hide them (false). */
+  cascadeVisible?: boolean;
+  /** Base delay before the cascade starts (ms). */
+  cascadeBaseDelay?: number;
+  /** Delay between each line (ms). */
+  cascadeStagger?: number;
 };
 
 export function CodeBlock({
@@ -17,6 +25,10 @@ export function CodeBlock({
   hideStatusBar = false,
   hideActionButton = false,
   numberWidth,
+  cascade = false,
+  cascadeVisible = true,
+  cascadeBaseDelay = 0,
+  cascadeStagger = 60,
 }: CodeBlockProps) {
   // For each line, how many visual lines it actually takes after wrapping
   const [visualCounts, setVisualCounts] = useState<number[]>(
@@ -41,6 +53,10 @@ export function CodeBlock({
           hideStatusBar={hideStatusBar}
           hideActionButton={hideActionButton}
           numberWidth={numberWidth}
+          enterDelayMs={
+            cascade ? cascadeBaseDelay + i * cascadeStagger : undefined
+          }
+          visible={cascade ? cascadeVisible : true}
           onMeasure={(count) => {
             setVisualCounts((prev) => {
               if (prev[i] === count) return prev;
