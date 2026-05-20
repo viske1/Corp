@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonHTMLAttributes, ReactNode, useState } from "react";
+import { ButtonHTMLAttributes, ReactNode, useEffect, useState } from "react";
 
 type ActionPillProps = {
   icon: string;
@@ -28,7 +28,12 @@ export function ActionPill({
 }: ActionPillProps) {
   const [hover, setHover] = useState(false);
 
-  const showLabel = forceShowLabel || hover;
+  // Reset hover when labelWidth becomes 0 (icon-only mode forced by parent)
+  useEffect(() => {
+    if (labelWidth === 0) setHover(false);
+  }, [labelWidth]);
+
+  const showLabel = forceShowLabel || (hover && labelWidth > 0);
 
   return (
     <button

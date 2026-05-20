@@ -70,10 +70,11 @@ export function HoverList({
           opacity: visible && rect ? 1 : 0,
         }}
       />
-      {items.map((child, i) =>
-        cloneElement(child, {
+      {items.map((child, i) => {
+        // Only pass `disableHoverBg` to React components, not DOM elements
+        const isDOMElement = typeof child.type === "string";
+        const extraProps: Record<string, unknown> = {
           key: child.key ?? i,
-          disableHoverBg: true,
           onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
             updateRect(e.currentTarget, !visible);
             child.props.onMouseEnter?.(e);
@@ -82,8 +83,12 @@ export function HoverList({
             updateRect(e.currentTarget, !visible);
             child.props.onFocus?.(e);
           },
-        }),
-      )}
+        };
+        if (!isDOMElement) {
+          extraProps.disableHoverBg = true;
+        }
+        return cloneElement(child, extraProps);
+      })}
     </div>
   );
 }

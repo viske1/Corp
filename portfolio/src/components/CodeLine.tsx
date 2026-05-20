@@ -13,6 +13,8 @@ type CodeLineProps = {
   text: string;
   initialStatus?: LineStatus;
   onMeasure?: (visualLines: number) => void;
+  hideStatusBar?: boolean;
+  hideActionButton?: boolean;
 };
 
 const LINE_HEIGHT = 28;
@@ -114,6 +116,8 @@ export function CodeLine({
   text,
   initialStatus = "default",
   onMeasure,
+  hideStatusBar = false,
+  hideActionButton = false,
 }: CodeLineProps) {
   const [status, setStatus] = useState<LineStatus>(initialStatus);
   const [hover, setHover] = useState(false);
@@ -184,7 +188,7 @@ export function CodeLine({
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className={`group relative flex items-stretch gap-3 -mx-3 px-3 rounded-xl transition-[margin,background-color] duration-200 hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30 ${
+      className={`group relative flex items-stretch gap-3 -mx-3 px-3 transition-[margin,background-color] duration-200  ${
         status !== "default" ? "my-2" : ""
       }`}
     >
@@ -208,11 +212,15 @@ export function CodeLine({
           ))}
         </div>
         {/* Status bar — hatched when default, solid otherwise */}
-        <span
-          className={`w-[3px] transition-colors duration-200 ${
-            status === "default" ? "status-bar-hatched" : STATUS_BAR_COLORS[status]
-          }`}
-        />
+        {!hideStatusBar && (
+          <span
+            className={`w-[3px] transition-colors duration-200 ${
+              status === "default"
+                ? "status-bar-hatched"
+                : STATUS_BAR_COLORS[status]
+            }`}
+          />
+        )}
       </div>
 
       {/* Line text — wraps naturally, with hatched bg when not default.
@@ -226,6 +234,7 @@ export function CodeLine({
       </p>
 
       {/* Action button — absolute on the right so it doesn't push the bg */}
+      {!hideActionButton && (
       <div
         ref={wrapperRef}
         className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
@@ -305,6 +314,7 @@ export function CodeLine({
           </HoverList>
         </DropdownContainer>
       </div>
+      )}
     </div>
   );
 }

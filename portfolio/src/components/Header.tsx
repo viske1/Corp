@@ -66,14 +66,14 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50  ">
       <nav className="px-4 sm:px-6 lg:px-8">
         <div
-          className="flex items-center justify-between py-1 pl-1 pr-2 rounded-full dark:bg-containerdark-900 bg-neutrallight-100 border-[0.5px] border-neutrallight-300 dark:border-borderdark-900 shadow-[0_4px_6px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_18px_-2px_rgba(0,0,0,1)] translate-y-[84px] overflow-hidden mx-auto"
+          className="flex items-center justify-between py-1 pl-1 pr-2 rounded-full dark:bg-containerdark-900 bg-neutrallight-100 border-[0.5px] border-neutrallight-300 dark:border-borderdark-900 shadow-[0_4px_6px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_18px_-2px_rgba(0,0,0,1)] translate-y-[84px] mx-auto"
           style={{
             width: isCV ? 20 : 608,
             opacity: isCV ? 0 : 1,
             filter: isCV ? "blur(6px)" : "blur(0px)",
             transition: isCV
-              ? `width 400ms ${easing} 300ms, opacity 250ms ${easing} 450ms, filter 250ms ${easing} 450ms`
-              : `width 400ms ${easing} 300ms, opacity 250ms ${easing} 250ms, filter 250ms ${easing} 250ms`,
+              ? `width 400ms ${easing} 180ms, opacity 250ms ${easing} 320ms, filter 250ms ${easing} 320ms`
+              : `width 400ms ${easing} 200ms, opacity 250ms ${easing} 200ms, filter 250ms ${easing} 200ms`,
             pointerEvents: isCV ? "none" : "auto",
           }}
         >
@@ -85,7 +85,7 @@ export function Header() {
                 transform: isCV ? "scale(0)" : "scale(1)",
                 filter: isCV ? "blur(1px)" : "blur(0px)",
                 transition: isCV
-                  ? `opacity 200ms ${easing} 140ms, transform 280ms ${easing} 80ms, filter 220ms ${easing} 80ms`
+                  ? `opacity 200ms ${easing} 140ms, transform 280ms ${easing} 80ms, filter 220ms ${easing} 140ms`
                   : `opacity 200ms ${easing} 460ms, transform 280ms ${easing} 460ms, filter 280ms ${easing} 460ms`,
               }}
             >
@@ -96,10 +96,10 @@ export function Header() {
             <div
               style={{
                 opacity: isCV ? 0 : 1,
-                transform: isCV ? "translateX(40px)" : "translateX(0)",
+                transform: isCV ? "translateX(24px)" : "translateX(0)",
                 filter: isCV ? "blur(1px)" : "blur(0px)",
                 transition: isCV
-                  ? `opacity 250ms ${easing} 100ms, transform 320ms ${easing} 40ms, filter 250ms ${easing} 40ms`
+                  ? `opacity 250ms ${easing} 100ms, transform 320ms ${easing} 40ms, filter 250ms ${easing} 100ms`
                   : `opacity 250ms ${easing} 500ms, transform 320ms ${easing} 500ms, filter 250ms ${easing} 500ms`,
               }}
             >
@@ -116,10 +116,10 @@ export function Header() {
             <div
               style={{
                 opacity: isCV ? 0 : 1,
-                transform: isCV ? "translateX(40px)" : "translateX(0)",
+                transform: isCV ? "translateX(24px)" : "translateX(0)",
                 filter: isCV ? "blur(1px)" : "blur(0px)",
                 transition: isCV
-                  ? `opacity 250ms ${easing} 60ms, transform 320ms ${easing}, filter 250ms ${easing}`
+                  ? `opacity 250ms ${easing} 60ms, transform 320ms ${easing}, filter 250ms ${easing} 60ms`
                   : `opacity 250ms ${easing} 540ms, transform 320ms ${easing} 540ms, filter 250ms ${easing} 540ms`,
               }}
             >
@@ -142,7 +142,7 @@ export function Header() {
               transform: isCV ? "scale(0)" : "scale(1)",
               filter: isCV ? "blur(1px)" : "blur(0px)",
               transition: isCV
-                ? `opacity 200ms ${easing} 140ms, transform 280ms ${easing} 80ms, filter 220ms ${easing} 80ms`
+                ? `opacity 200ms ${easing} 140ms, transform 280ms ${easing} 80ms, filter 220ms ${easing} 220ms`
                 : `opacity 200ms ${easing} 460ms, transform 280ms ${easing} 460ms, filter 280ms ${easing} 460ms`,
             }}
           >

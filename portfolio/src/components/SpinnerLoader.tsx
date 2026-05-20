@@ -1,3 +1,4 @@
+type Size = "xs" | "sm" | "md" | "lg" | "xl";
 type ColorScheme =
   | "primary"
   | "neutral"
@@ -7,44 +8,93 @@ type ColorScheme =
   | "white";
 
 type SpinnerLoaderProps = {
-  customSize?: number;
+  size?: Size;
+  customSize?: number | string | null;
   colorScheme?: ColorScheme;
 };
 
-const COLOR_CLASSES: Record<ColorScheme, string> = {
-  primary: "text-primarylight-900 dark:text-primarydark-900",
-  neutral: "text-neutrallight-900 dark:text-neutraldark-900",
-  success: "text-success-900",
-  destructive: "text-destructive-900",
-  warning: "text-warning-900",
-  white: "text-white",
+const SIZE_MAP: Record<Size, number> = {
+  xs: 12,
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
+};
+
+const BACKGROUND_COLORS: Record<ColorScheme, string> = {
+  neutral: "rgba(113, 113, 122, 0.25)",
+  primary: "rgba(49, 101, 255, 0.25)",
+  success: "rgba(34, 197, 94, 0.25)",
+  destructive: "rgba(239, 68, 68, 0.25)",
+  warning: "rgba(245, 158, 11, 0.25)",
+  white: "rgba(255, 255, 255, 0.3)",
+};
+
+const FOREGROUND_COLORS: Record<ColorScheme, string> = {
+  neutral: "rgba(113, 113, 122, 1)",
+  primary: "rgba(49, 101, 255, 1)",
+  success: "rgba(34, 197, 94, 1)",
+  destructive: "rgba(239, 68, 68, 1)",
+  warning: "rgba(245, 158, 11, 1)",
+  white: "rgba(255, 255, 255, 1)",
 };
 
 export function SpinnerLoader({
-  customSize = 16,
+  size = "md",
+  customSize = null,
   colorScheme = "neutral",
 }: SpinnerLoaderProps) {
+  const computedSize =
+    customSize != null ? parseInt(String(customSize)) : SIZE_MAP[size];
+
+  const strokeWidth =
+    computedSize <= 12
+      ? 2
+      : computedSize <= 16
+        ? 2.5
+        : computedSize <= 24
+          ? 3
+          : 3.5;
+
+  const center = computedSize / 2;
+  const radius = (computedSize - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const arcLength = circumference * 0.25;
+  const dashArray = `${arcLength} ${circumference - arcLength}`;
+
+  const backgroundColor = BACKGROUND_COLORS[colorScheme];
+  const foregroundColor = FOREGROUND_COLORS[colorScheme];
+
   return (
-    <svg
-      className={`animate-spin ${COLOR_CLASSES[colorScheme]}`}
-      style={{ width: customSize, height: customSize }}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+    <div
+      className="inline-flex items-center justify-center"
+      style={{ width: computedSize, height: computedSize }}
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-      />
-    </svg>
+      <svg
+        width={computedSize}
+        height={computedSize}
+        viewBox={`0 0 ${computedSize} ${computedSize}`}
+        className="animate-spin"
+      >
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={backgroundColor}
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={foregroundColor}
+          strokeWidth={strokeWidth}
+          strokeDasharray={dashArray}
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
   );
 }

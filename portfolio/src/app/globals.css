@@ -74,6 +74,17 @@
   --color-buttondark-900: #2f3039;
   --color-buttonborderdark-900: #494e5a;
 
+  --color-main-50: rgba(116, 255, 167, 0.05);
+  --color-main-100: rgba(116, 255, 167, 0.1);
+  --color-main-200: rgba(116, 255, 167, 0.2);
+  --color-main-300: rgba(116, 255, 167, 0.3);
+  --color-main-400: rgba(116, 255, 167, 0.5);
+  --color-main-500: rgba(116, 255, 167, 0.6);
+  --color-main-600: rgba(116, 255, 167, 0.7);
+  --color-main-700: rgba(116, 255, 167, 0.8);
+  --color-main-800: rgba(116, 255, 167, 0.9);
+  --color-main-900: #74ffa7;
+
   --color-destructive-100: rgba(239, 68, 68, 0.1);
   --color-destructive-200: rgba(239, 68, 68, 0.2);
   --color-destructive-300: rgba(239, 68, 68, 0.3);
