@@ -15,6 +15,7 @@ type CodeLineProps = {
   onMeasure?: (visualLines: number) => void;
   hideStatusBar?: boolean;
   hideActionButton?: boolean;
+  numberWidth?: number;
 };
 
 const LINE_HEIGHT = 28;
@@ -118,6 +119,7 @@ export function CodeLine({
   onMeasure,
   hideStatusBar = false,
   hideActionButton = false,
+  numberWidth,
 }: CodeLineProps) {
   const [status, setStatus] = useState<LineStatus>(initialStatus);
   const [hover, setHover] = useState(false);
@@ -201,10 +203,13 @@ export function CodeLine({
           {Array.from({ length: visualLines }).map((_, i) => (
             <span
               key={i}
-              className="text-[11px] tabular-nums font-jetbrains text-neutrallight-500 dark:text-neutraldark-500 w-8 text-right flex items-center justify-end"
+              className={`text-[11px] tabular-nums font-jetbrains text-neutrallight-500 dark:text-neutraldark-500 text-right flex items-center justify-end ${
+                numberWidth == null ? "w-8" : ""
+              }`}
               style={{
                 fontFamily: "var(--font-jetbrains-mono)",
                 height: LINE_HEIGHT,
+                width: numberWidth,
               }}
             >
               {lineNumber + i}

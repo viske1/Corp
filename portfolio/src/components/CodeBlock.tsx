@@ -8,6 +8,7 @@ type CodeBlockProps = {
   startLineNumber: number;
   hideStatusBar?: boolean;
   hideActionButton?: boolean;
+  numberWidth?: number;
 };
 
 export function CodeBlock({
@@ -15,6 +16,7 @@ export function CodeBlock({
   startLineNumber,
   hideStatusBar = false,
   hideActionButton = false,
+  numberWidth,
 }: CodeBlockProps) {
   // For each line, how many visual lines it actually takes after wrapping
   const [visualCounts, setVisualCounts] = useState<number[]>(
@@ -38,6 +40,7 @@ export function CodeBlock({
           text={line}
           hideStatusBar={hideStatusBar}
           hideActionButton={hideActionButton}
+          numberWidth={numberWidth}
           onMeasure={(count) => {
             setVisualCounts((prev) => {
               if (prev[i] === count) return prev;

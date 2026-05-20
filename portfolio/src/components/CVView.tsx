@@ -214,10 +214,10 @@ export function CVView() {
             >
               <div
                 onClick={() => setSelectedIndex(isSelected ? null : i)}
-                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto transition-[background-color] duration-200 ${
+                className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto border-[0.5px] transition-[background-color,border-color] duration-200 ${
                   isSelected
-                    ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30"
-                    : "hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30"
+                    ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30 border-neutrallight-300 dark:border-borderdark-900"
+                    : "border-transparent hover:bg-neutrallight-200/50 dark:hover:bg-buttondark-900/30"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -310,16 +310,30 @@ export function CVView() {
                     opacity: isSelected ? 1 : 0,
                     filter: isSelected ? "blur(0px)" : "blur(4px)",
                     transition: isSelected
-                      ? `max-height 320ms ${easing}, opacity 250ms ${easing} 80ms, filter 250ms ${easing} 80ms`
+                      ? `max-height 320ms ${easing}, opacity 300ms ${easing} 200ms, filter 300ms ${easing} 200ms`
                       : `max-height 250ms ${easing} 80ms, opacity 180ms ${easing}, filter 180ms ${easing}`,
                   }}
                 >
-                  <div className="mt-2 px-1 pb-1">
+                  {/* Splitter between header and content — animates width from center */}
+                  <div className="mt-2 mb-2 -mx-2 h-[0.5px] flex justify-center">
+                    <div
+                      className="h-full bg-neutrallight-300 dark:bg-borderdark-900"
+                      style={{
+                        width: isSelected ? 448 : 0,
+                        opacity: isSelected ? 1 : 0,
+                        transition: isSelected
+                          ? `width 320ms ${easing} 150ms, opacity 250ms ${easing} 150ms`
+                          : `width 200ms ${easing}, opacity 150ms ${easing}`,
+                      }}
+                    />
+                  </div>
+                  <div className="px-1 pb-1 overflow-hidden">
                     <CodeBlock
                       lines={exp.description}
                       startLineNumber={1}
                       hideStatusBar
                       hideActionButton
+                      numberWidth={20}
                     />
                   </div>
                 </div>
