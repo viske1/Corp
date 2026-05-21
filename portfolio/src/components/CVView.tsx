@@ -650,7 +650,15 @@ export function CVView() {
       {expanded &&
         (() => {
           const exp = EXPERIENCES[expanded.index];
-          const TARGET_TOP = 220;
+          // Center vertically in the viewport based on the expanded card's final height
+          const cardFinalHeight =
+            expanded.anchor.height + expandedTextHeight + 40;
+          const TARGET_TOP =
+            typeof window !== "undefined"
+              ? Math.max(80, (window.innerHeight - cardFinalHeight) / 2)
+              : 280;
+          const cardLeft = expanded.anchor.left - 50; // matches the card's expanded left
+          const cardWidth = expanded.anchor.width + 100;
           return (
             <>
               {/* Backdrop */}
@@ -665,9 +673,74 @@ export function CVView() {
                   transition: `opacity 500ms ${smoothEasing}`,
                 }}
               />
+
+              {/* Navigation toolbar — vertical, on the right side of the card, vertically centered */}
+              <div
+                className="fixed z-50 flex flex-col gap-2 pointer-events-auto"
+                style={{
+                  top: TARGET_TOP + cardFinalHeight / 2,
+                  left: cardLeft + cardWidth + 12,
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <div
+                  aria-label="Précédent"
+                  className="flex items-center gap-1 cursor-pointer"
+                  style={{
+                    opacity: expandedActive ? 1 : 0,
+                    transform: expandedActive
+                      ? "translateY(0)"
+                      : "translateY(5px)",
+                    filter: expandedActive ? "blur(0px)" : "blur(4px)",
+                    transition: expandedActive
+                      ? `opacity 700ms ${smoothEasing} 500ms, transform 700ms ${smoothEasing} 500ms, filter 700ms ${smoothEasing} 500ms`
+                      : `opacity 250ms ${smoothEasing}, transform 300ms ${smoothEasing}, filter 250ms ${smoothEasing}`,
+                    pointerEvents: expandedActive ? "auto" : "none",
+                  }}
+                >
+                  <span className="flex items-center justify-center w-5 h-5 rounded-md bg-neutrallight-200/50 dark:bg-buttondark-900/40 backdrop-blur-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/CorpIcon/arrow_upward.svg"
+                      alt=""
+                      className="w-3.5 h-3.5 custom-icon opacity-40"
+                    />
+                  </span>
+                  <span className="text-[11px] font-semibold tracking-[-0.1px] text-neutrallight-600/70 dark:text-neutraldark-600/70">
+                    Précédent
+                  </span>
+                </div>
+                <div
+                  aria-label="Suivant"
+                  className="flex items-center gap-1 cursor-pointer"
+                  style={{
+                    opacity: expandedActive ? 1 : 0,
+                    transform: expandedActive
+                      ? "translateY(0)"
+                      : "translateY(5px)",
+                    filter: expandedActive ? "blur(0px)" : "blur(4px)",
+                    transition: expandedActive
+                      ? `opacity 700ms ${smoothEasing} 600ms, transform 700ms ${smoothEasing} 600ms, filter 700ms ${smoothEasing} 600ms`
+                      : `opacity 250ms ${smoothEasing}, transform 300ms ${smoothEasing}, filter 250ms ${smoothEasing}`,
+                    pointerEvents: expandedActive ? "auto" : "none",
+                  }}
+                >
+                  <span className="flex items-center justify-center w-5 h-5 rounded-md bg-neutrallight-200/50 dark:bg-buttondark-900/40 backdrop-blur-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/CorpIcon/arrow_downward.svg"
+                      alt=""
+                      className="w-3.5 h-3.5 custom-icon opacity-40"
+                    />
+                  </span>
+                  <span className="text-[11px] font-semibold tracking-[-0.1px] text-neutrallight-600/70 dark:text-neutraldark-600/70">
+                    Suivant
+                  </span>
+                </div>
+              </div>
               {/* Expanded card — mirrors the original slot, animates only its position */}
               <div
-                className={`fixed z-40 rounded-2xl overflow-hidden border-[0.5px] ${
+                className={`fixed z-40 rounded-4xl overflow-hidden border-[0.5px] ${
                   expandedActive
                     ? "bg-neutrallight-200/50 dark:bg-buttondark-900/40 border-neutrallight-300 dark:border-borderdark-900"
                     : "bg-transparent border-transparent"
@@ -783,7 +856,7 @@ export function CVView() {
                       Fixed width prevents reflow as the parent card animates its width. */}
                   <div
                     ref={expandedTextRef}
-                    className="pt-4 text-[14px] leading-[1.6] tracking-[-0.1px] text-neutrallight-700 dark:text-neutraldark-600"
+                    className="pt-4 text-[14px] leading-[1.6] tracking-[-0.1px] text-neutrallight-700 dark:text-neutraldark-600 font-medium"
                     style={{
                       width: 475,
                       opacity: expandedActive ? 1 : 0.6,
