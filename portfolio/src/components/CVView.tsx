@@ -161,6 +161,14 @@ export function CVView() {
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
     () => new Set(),
   );
+  // Expanded item state: tracks which item is open + its slot rect (anchor)
+  const [expanded, setExpanded] = useState<{
+    index: number;
+    anchor: { top: number; left: number; width: number; height: number };
+  } | null>(null);
+  // Drives the entry/exit animation
+  const [expandedActive, setExpandedActive] = useState(false);
+  const itemSlotRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const [openFolders, setOpenFolders] = useState<Set<number>>(
     () => new Set(FOLDERS.map((_, i) => i)),
   );
@@ -215,6 +223,34 @@ export function CVView() {
       else next.add(i);
       return next;
     });
+  };
+
+  const expandItem = (i: number) => {
+    const slotEl = itemSlotRefs.current[i];
+    if (!slotEl) return;
+    const rect = slotEl.getBoundingClientRect();
+    // First, set expanded with the anchor and ensure expandedActive is false
+    setExpandedActive(false);
+    setExpanded({
+      index: i,
+      anchor: {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      },
+    });
+    // Then on the next paint, activate the animation
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setExpandedActive(true));
+      });
+    });
+  };
+
+  const collapseItem = () => {
+    setExpandedActive(false);
+    setTimeout(() => setExpanded(null), 500);
   };
 
   // Reset to all spinners whenever we close
@@ -272,7 +308,7 @@ export function CVView() {
 
   return (
     <div
-      className="fixed inset-0 z-20 overflow-y-auto pointer-events-none"
+      className="fixed inset-0 z-20 overflow-y-auto pointer-events-none flex items-center justify-center"
       style={{
         opacity: isOpen ? 1 : 0,
         transition: isOpen
@@ -281,7 +317,7 @@ export function CVView() {
         pointerEvents: isOpen ? "auto" : "none",
       }}
     >
-      <div className="w-full max-w-md mx-auto px-4 pt-[180px] pb-[180px] flex flex-col gap-2">
+      <div className="w-full max-w-md mx-auto px-4 py-8 flex flex-col gap-2">
         {FOLDERS.map((folder, folderIdx) => {
           const folderOpen = openFolders.has(folderIdx);
           // Compute the global index of the first item in this folder
@@ -411,7 +447,10 @@ export function CVView() {
                         }}
                       >
                         <div
-                          onClick={() => toggleSelected(i)}
+                          ref={(el) => {
+                            itemSlotRefs.current[i] = el;
+                          }}
+                          onClick={() => expandItem(i)}
                           onMouseEnter={(e) =>
                             updateHover(folderIdx, e.currentTarget)
                           }
@@ -422,6 +461,8 @@ export function CVView() {
                           }`}
                           style={{
                             transition: `background-color 200ms ${easing}`,
+                            visibility:
+                              expanded?.index === i ? "hidden" : "visible",
                           }}
                         >
                           <div className="flex items-center gap-3">
@@ -586,6 +627,131 @@ export function CVView() {
           );
         })}
       </div>
+
+      {/* Backdrop + expanded item (uses original slot rect as anchor) */}
+      {expanded &&
+        (() => {
+          const exp = EXPERIENCES[expanded.index];
+          const TARGET_TOP = 220;
+          return (
+            <>
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 z-30 pointer-events-auto"
+                onClick={collapseItem}
+                style={{
+                  background: "rgba(0, 0, 0, 0.45)",
+                  opacity: expandedActive ? 1 : 0,
+                  transition: `opacity 500ms ${smoothEasing}`,
+                }}
+              />
+              {/* Expanded card — mirrors the original slot, animates only its position */}
+              <div
+                className={`fixed z-40 rounded-2xl overflow-hidden border-[0.5px] ${
+                  expandedActive
+                    ? "bg-neutrallight-200/50 dark:bg-buttondark-900/40 border-neutrallight-300 dark:border-borderdark-900"
+                    : "bg-transparent border-transparent"
+                }`}
+                style={{
+                  top: expandedActive ? TARGET_TOP : expanded.anchor.top,
+                  left: expandedActive
+                    ? expanded.anchor.left - 50
+                    : expanded.anchor.left,
+                  width: expandedActive
+                    ? expanded.anchor.width + 100
+                    : expanded.anchor.width,
+                  height: expandedActive
+                    ? expanded.anchor.height + 150
+                    : expanded.anchor.height,
+                  backdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
+                  WebkitBackdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
+                  transition: expandedActive
+                    ? `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing}, border-color 500ms ${smoothEasing}, backdrop-filter 500ms ${smoothEasing}, -webkit-backdrop-filter 500ms ${smoothEasing}`
+                    : `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing} 50ms, border-color 500ms ${smoothEasing} 50ms, backdrop-filter 500ms ${smoothEasing} 50ms, -webkit-backdrop-filter 500ms ${smoothEasing} 50ms`,
+                }}
+              >
+                {/* Original slot content — exactly mirrors the list item */}
+                <div
+                  className="flex flex-col"
+                  style={{
+                    paddingLeft: expandedActive ? 16 : 32,
+                    paddingRight: expandedActive ? 16 : 8,
+                    paddingTop: expandedActive ? 16 : 8,
+                    paddingBottom: expandedActive ? 16 : 8,
+                    transition: `padding 500ms ${smoothEasing}`,
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Same icon area as the original slot — preserves current icon state */}
+                    <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
+                      {/* Spinner layer */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{
+                          opacity: icons[expanded.index] === "spinner" ? 1 : 0,
+                          transform:
+                            icons[expanded.index] === "spinner"
+                              ? "scale(1)"
+                              : "scale(0)",
+                        }}
+                      >
+                        <SpinnerLoader size="sm" colorScheme="neutral" />
+                      </div>
+                      {/* Diploma layer */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center rounded-md bg-primarylight-900/10 dark:bg-primarydark-900/10"
+                        style={{
+                          opacity: icons[expanded.index] === "diploma" ? 1 : 0,
+                          transform:
+                            icons[expanded.index] === "diploma"
+                              ? "scale(1)"
+                              : "scale(0)",
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/CorpIcon/diploma.svg"
+                          alt="Formation"
+                          className="w-4 h-4"
+                        />
+                      </div>
+                      {/* Job layer */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center rounded-md bg-main-100"
+                        style={{
+                          opacity: icons[expanded.index] === "job" ? 1 : 0,
+                          transform:
+                            icons[expanded.index] === "job"
+                              ? "scale(1)"
+                              : "scale(0)",
+                        }}
+                      >
+                        <span
+                          aria-label="Expérience"
+                          className="w-4 h-4 svg-main"
+                          style={{
+                            ["--svg-mask" as string]: "url(/CorpIcon/job.svg)",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-600 dark:text-neutraldark-600 truncate">
+                      {exp.title}
+                    </p>
+                    <span
+                      className="shrink-0 text-[12px] font-medium tracking-[-0.1px] text-neutrallight-500 dark:text-neutraldark-500 tabular-nums"
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono)",
+                      }}
+                    >
+                      {exp.period}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()}
     </div>
   );
 }
