@@ -151,12 +151,16 @@ function pickRandomIcon(): "diploma" | "job" {
   return Math.random() < 0.5 ? "diploma" : "job";
 }
 
+// Persist the resolved icons across CV open/close cycles
+// so the "loading" simulation only runs the first time.
+let cachedResolvedIcons: ItemIcon[] | null = null;
+
 export function CVView() {
   const { view } = useView();
   const isOpen = view === "cv";
 
-  const [icons, setIcons] = useState<ItemIcon[]>(() =>
-    EXPERIENCES.map(() => "spinner"),
+  const [icons, setIcons] = useState<ItemIcon[]>(
+    () => cachedResolvedIcons ?? EXPERIENCES.map(() => "spinner"),
   );
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
     () => new Set(),
@@ -326,7 +330,9 @@ export function CVView() {
     if (!isOpen) {
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
-      setIcons(EXPERIENCES.map(() => "spinner"));
+      // Only reset to spinners if the loading sequence has never completed.
+      // Once cached, the icons stay resolved for subsequent visits.
+      setIcons(cachedResolvedIcons ?? EXPERIENCES.map(() => "spinner"));
       setSelectedIndices(new Set());
       setOpenFolders(new Set(FOLDERS.map((_, i) => i)));
     }
@@ -335,6 +341,8 @@ export function CVView() {
   // Orchestrate the waves while open, using a pre-computed sequence
   useEffect(() => {
     if (!isOpen) return;
+    // Loading already simulated on a previous visit — skip the waves
+    if (cachedResolvedIcons) return;
 
     let cancelled = false;
     const currentIcons = EXPERIENCES.map(() => "spinner") as ItemIcon[];
@@ -360,6 +368,10 @@ export function CVView() {
           const next =
             MIN_INTERVAL + Math.random() * (MAX_INTERVAL - MIN_INTERVAL);
           scheduleNextWave(next);
+        } else {
+          // Sequence finished — cache the final icons so subsequent
+          // visits skip the loading simulation.
+          cachedResolvedIcons = [...currentIcons];
         }
       }, delay);
       timersRef.current.push(t);
