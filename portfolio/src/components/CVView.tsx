@@ -547,6 +547,34 @@ export function CVView() {
                             : `opacity 180ms ${easing} ${exitDelay}ms, transform 250ms ${easing} ${exitDelay}ms, filter 180ms ${easing} ${exitDelay}ms`,
                         }}
                       >
+                        {/* Tree branch — sibling of the slot so it doesn't fade with it */}
+                        <svg
+                          width="12"
+                          height="14"
+                          viewBox="-0.5 -0.5 12 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="absolute text-neutrallight-300 dark:text-borderdark-900 pointer-events-none translate-x-[0.1px]"
+                          style={{
+                            left: -10.2,
+                            top: 5,
+                          }}
+                          aria-hidden
+                        >
+                          <path
+                            d="M0.5 0.5V6.5C0.5 9.81371 3.18629 12.5 6.5 12.5H10.5"
+                            stroke="#2e3037"
+                            strokeWidth="1.2"
+                            strokeLinecap="round"
+                            strokeDasharray={20}
+                            strokeDashoffset={isOpen ? 0 : 20}
+                            style={{
+                              transition: isOpen
+                                ? `stroke-dashoffset 600ms ${smoothEasing} ${enterDelay + 250 + localIdx * 120}ms`
+                                : `stroke-dashoffset 200ms ${easing} ${exitDelay}ms`,
+                            }}
+                          />
+                        </svg>
                         <div
                           ref={(el) => {
                             itemSlotRefs.current[i] = el;
@@ -575,23 +603,12 @@ export function CVView() {
                           }}
                         >
                           <div className="flex items-center gap-3">
-                            {/* Tree branch — connects vertical line to the item */}
-                            <svg
-                              width="12"
-                              height="14"
-                              viewBox="-0.5 -0.5 12 14"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="shrink-0 -ml-4 -mr-0.5 -mt-3 text-neutrallight-300 dark:text-borderdark-900 translate-x-[-2.1px]"
+                            {/* Spacer to preserve original layout where the SVG branch used to be */}
+                            <span
                               aria-hidden
-                            >
-                              <path
-                                d="M0.5 0.5V6.5C0.5 9.81371 3.18629 12.5 6.5 12.5H10.5"
-                                stroke="#2e3037"
-                                strokeWidth="1.2"
-                                strokeLinecap="round"
-                              />
-                            </svg>
+                              className="shrink-0 -ml-4 -mr-0.5"
+                              style={{ width: 12, height: 14 }}
+                            />
                             {/* Icon area — morphs from spinner to diploma/job */}
                             <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
                               {/* Spinner layer */}
