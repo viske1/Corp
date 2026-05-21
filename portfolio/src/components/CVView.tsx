@@ -259,14 +259,15 @@ export function CVView() {
 
           // Approximate the folder panel height when open.
           // Must match the inner panel's maxHeight expression: (computePanelHeight + 24).
-          const folderContentHeight = folder.items.reduce((sum, item, idx) => {
-            const i = itemsBeforeFolder + idx;
-            const itemHeight = 44; // py-2 + content height
-            const panelExtra = selectedIndices.has(i)
-              ? computePanelHeight(item.description) + 24
-              : 0;
-            return sum + itemHeight + panelExtra + 4; // 4 = gap-1
-          }, 0) + 8; // +8 cushion for pt-1 of inner container + sub-pixel rounding
+          const folderContentHeight =
+            folder.items.reduce((sum, item, idx) => {
+              const i = itemsBeforeFolder + idx;
+              const itemHeight = 44; // py-2 + content height
+              const panelExtra = selectedIndices.has(i)
+                ? computePanelHeight(item.description) + 24
+                : 0;
+              return sum + itemHeight + panelExtra + 4; // 4 = gap-1
+            }, 0) + 8; // +8 cushion for pt-1 of inner container + sub-pixel rounding
 
           return (
             <div key={folder.name} className="flex flex-col">
@@ -290,7 +291,7 @@ export function CVView() {
                 <img
                   src="/CorpIcon/folder.svg"
                   alt=""
-                  className="shrink-0 w-4 h-4 custom-icon"
+                  className="shrink-0 w-4 h-4 custom-icon opacity-60"
                 />
                 <span className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-900 dark:text-neutraldark-900 truncate text-left">
                   {folder.name}
@@ -314,29 +315,8 @@ export function CVView() {
                     : `max-height 320ms ${easing} 60ms, opacity 180ms ${easing}`,
                 }}
               >
-                {/* Vertical tree line on the left — stops at the center of the last item header */}
-                {(() => {
-                  const lastIdx = folder.items.length - 1;
-                  const lastItem = folder.items[lastIdx];
-                  const lastGlobalIdx = itemsBeforeFolder + lastIdx;
-                  const lastIsSelected = selectedIndices.has(lastGlobalIdx);
-                  // 24.5px = half of the last file header height
-                  const HALF_HEADER = 24.5;
-                  // Panel maxHeight uses (panelHeight + 24) — use the SAME expression here
-                  const lastPanelMax = computePanelHeight(lastItem.description) + 24;
-                  // Closed: stop at center of last header → 100% - HALF_HEADER
-                  // Open: subtract everything below the center of the last header
-                  //       (the panel + the bottom half of the header) → 100% - (panel + HALF_HEADER)
-                  const lineHeight = lastIsSelected
-                    ? `calc(100% - ${lastPanelMax + HALF_HEADER}px)`
-                    : `calc(100% - ${HALF_HEADER}px)`;
-                  return (
-                    <div
-                      className="absolute left-[14px] top-0 w-px bg-neutrallight-300 dark:bg-borderdark-800 rounded-full"
-                      style={{ height: lineHeight }}
-                    />
-                  );
-                })()}
+                {/* Vertical tree line on the left — full height */}
+                <div className="absolute left-[14px] top-0 bottom-0 w-px bg-neutrallight-300 dark:bg-borderdark-800 rounded-full" />
 
                 {/* Static duplicate line — fixed height per folder */}
                 <div
@@ -371,7 +351,7 @@ export function CVView() {
                       >
                         <div
                           onClick={() => toggleSelected(i)}
-                          className={`flex flex-col px-2 py-2 rounded-xl cursor-pointer pointer-events-auto ${
+                          className={`relative flex flex-col py-2 pr-2 pl-8 -ml-6 rounded-xl cursor-pointer pointer-events-auto ${
                             isSelected
                               ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30"
                               : "hover:bg-neutrallight-200/40 dark:hover:bg-buttondark-900/50"
@@ -384,7 +364,7 @@ export function CVView() {
                         >
                           <div className="flex items-center gap-3">
                             {/* Tree branch — connects vertical line to the item */}
-                            <svg
+                            {/* <svg
                               width="12"
                               height="14"
                               viewBox="-0.5 -0.5 12 14"
@@ -396,9 +376,10 @@ export function CVView() {
                               <path
                                 d="M0.5 0.5V6.5C0.5 9.81371 3.18629 12.5 6.5 12.5H10.5"
                                 stroke="#2e3037"
+                                strokeWidth="1.2"
                                 strokeLinecap="round"
                               />
-                            </svg>
+                            </svg> */}
                             {/* Icon area — morphs from spinner to diploma/job */}
                             <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
                               {/* Spinner layer */}
@@ -421,7 +402,7 @@ export function CVView() {
 
                               {/* Diploma layer */}
                               <div
-                                className="absolute inset-0 flex items-center justify-center"
+                                className="absolute inset-0 flex items-center justify-center rounded-md bg-primarylight-900/10 dark:bg-primarydark-900/10"
                                 style={{
                                   opacity: icon === "diploma" ? 1 : 0,
                                   transform:
@@ -438,13 +419,13 @@ export function CVView() {
                                 <img
                                   src="/CorpIcon/diploma.svg"
                                   alt="Formation"
-                                  className="w-4 h-4 custom-icon"
+                                  className="w-4 h-4"
                                 />
                               </div>
 
                               {/* Job layer */}
                               <div
-                                className="absolute inset-0 flex items-center justify-center"
+                                className="absolute inset-0 flex items-center justify-center rounded-md bg-main-100"
                                 style={{
                                   opacity: icon === "job" ? 1 : 0,
                                   transform:
@@ -455,23 +436,25 @@ export function CVView() {
                                       : `opacity 180ms ${easing}, transform 220ms ${easing}`,
                                 }}
                               >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src="/CorpIcon/job.svg"
-                                  alt="Expérience"
-                                  className="w-4 h-4 custom-icon"
+                                <span
+                                  aria-label="Expérience"
+                                  className="w-4 h-4 svg-main"
+                                  style={{
+                                    ["--svg-mask" as string]:
+                                      "url(/CorpIcon/job.svg)",
+                                  }}
                                 />
                               </div>
                             </div>
 
                             {/* Title — center */}
-                            <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-900 dark:text-neutraldark-900 truncate">
+                            <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-600 dark:text-neutraldark-600 truncate">
                               {exp.title}
                             </p>
 
                             {/* Date — right */}
                             <span
-                              className="shrink-0 text-[12px] font-medium tracking-[-0.1px] text-neutrallight-600 dark:text-neutraldark-600 tabular-nums"
+                              className="shrink-0 text-[12px] font-medium tracking-[-0.1px] text-neutrallight-500 dark:text-neutraldark-500 tabular-nums"
                               style={{
                                 fontFamily: "var(--font-jetbrains-mono)",
                               }}

@@ -44,7 +44,7 @@
   --color-primarylight-600: #83a3ff;
   --color-primarylight-700: #6f93ff;
   --color-primarylight-800: #4674ff;
-  --color-primarylight-900: #3165ff;
+  --color-primarylight-900: #7486ff;
 
   --color-primarydark-50: #1b2130;
   --color-primarydark-100: #1e2847;
@@ -55,7 +55,7 @@
   --color-primarydark-600: #2a4eba;
   --color-primarydark-700: #2c56d1;
   --color-primarydark-800: #2f5de8;
-  --color-primarydark-900: #3165ff;
+  --color-primarydark-900: #7486ff;
 
   --color-borderdark-800: #2e3037;
   --color-borderdark-900: #3a3e47;
@@ -138,6 +138,19 @@ body {
 .svg-primary-filter {
   filter: invert(40%) sepia(85%) saturate(3107%) hue-rotate(217deg)
     brightness(100%) contrast(101%);
+}
+
+/* svg-main: uses mask-image so the color is exactly --color-main-900 */
+.svg-main {
+  background-color: var(--color-main-900);
+  -webkit-mask-image: var(--svg-mask);
+  mask-image: var(--svg-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .svg-warning-filter {
