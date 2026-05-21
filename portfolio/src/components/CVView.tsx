@@ -393,6 +393,18 @@ export function CVView() {
             (sum, f) => sum + f.items.length,
             0,
           );
+          // Row index of this folder in the unified cascade
+          // (each previous folder counts for 1 header + its items)
+          const folderRowIndex = FOLDERS.slice(0, folderIdx).reduce(
+            (sum, f) => sum + 1 + f.items.length,
+            0,
+          );
+          const folderEnterDelay = BASE_DELAY + folderRowIndex * ITEM_STAGGER;
+          const folderExitDelay =
+            (FOLDERS.reduce((s, f) => s + 1 + f.items.length, 0) -
+              1 -
+              folderRowIndex) *
+            30;
 
           // Approximate the folder panel height when open.
           // Must match the inner panel's maxHeight expression: (computePanelHeight + 24).
@@ -441,6 +453,14 @@ export function CVView() {
                 onClick={() => toggleFolder(folderIdx)}
                 onMouseEnter={(e) => updateHover(folderIdx, e.currentTarget)}
                 className="relative flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl cursor-pointer pointer-events-auto transition-colors duration-150"
+                style={{
+                  opacity: isOpen ? 1 : 0,
+                  transform: isOpen ? "translateY(0)" : "translateY(-12px)",
+                  filter: isOpen ? "blur(0px)" : "blur(4px)",
+                  transition: isOpen
+                    ? `opacity 350ms ${easing} ${folderEnterDelay}ms, transform 400ms ${easing} ${folderEnterDelay}ms, filter 350ms ${easing} ${folderEnterDelay}ms, background-color 150ms ease-out`
+                    : `opacity 180ms ${easing} ${folderExitDelay}ms, transform 250ms ${easing} ${folderExitDelay}ms, filter 180ms ${easing} ${folderExitDelay}ms`,
+                }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -480,20 +500,33 @@ export function CVView() {
                     : `max-height 320ms ${easing} 60ms, opacity 180ms ${easing}`,
                 }}
               >
-                {/* Vertical tree line on the left — full height */}
-                <div className="absolute left-[14px] top-0 bottom-0 w-px bg-neutrallight-300 dark:bg-borderdark-800 rounded-full" />
-
-                {/* Static duplicate line — fixed height per folder */}
-                <div
-                  className="absolute left-[14px] top-0 w-px bg-neutrallight-300 dark:bg-borderdark-800 rounded-full"
-                  style={{ height: folderIdx === 0 ? 98.5 : 57.5 }}
-                />
-
-                <div className="flex flex-col gap-1 pl-6 pt-1">
+                <div className="flex flex-col gap-1 pl-6 pt-1 relative">
+                  {/* Vertical tree line on the left — animated in one go */}
+                  <div
+                    aria-hidden
+                    className="absolute w-px bg-neutrallight-300 dark:bg-borderdark-800 rounded-full pointer-events-none"
+                    style={{
+                      left: 14,
+                      top: 0,
+                      bottom: 24,
+                      opacity: isOpen ? 1 : 0,
+                      transform: isOpen ? "translateY(0)" : "translateY(-12px)",
+                      filter: isOpen ? "blur(0px)" : "blur(4px)",
+                      transition: isOpen
+                        ? `opacity 350ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, transform 400ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, filter 350ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms`
+                        : `opacity 180ms ${easing}, transform 250ms ${easing}, filter 180ms ${easing}`,
+                    }}
+                  />
                   {folder.items.map((exp, localIdx) => {
                     const i = itemsBeforeFolder + localIdx;
-                    const enterDelay = BASE_DELAY + i * ITEM_STAGGER;
-                    const exitDelay = (EXPERIENCES.length - 1 - i) * 30;
+                    // Unified cascade index: header of this folder + previous rows + local index
+                    const rowIndex = folderRowIndex + 1 + localIdx;
+                    const totalRows = FOLDERS.reduce(
+                      (s, f) => s + 1 + f.items.length,
+                      0,
+                    );
+                    const enterDelay = BASE_DELAY + rowIndex * ITEM_STAGGER;
+                    const exitDelay = (totalRows - 1 - rowIndex) * 30;
                     const icon = icons[i];
                     const isSelected = selectedIndices.has(i);
                     const isLast = localIdx === folder.items.length - 1;
@@ -502,7 +535,7 @@ export function CVView() {
                     return (
                       <div
                         key={exp.title}
-                        className="flex flex-col"
+                        className="flex flex-col relative"
                         style={{
                           opacity: isOpen ? 1 : 0,
                           transform: isOpen
@@ -543,13 +576,13 @@ export function CVView() {
                         >
                           <div className="flex items-center gap-3">
                             {/* Tree branch — connects vertical line to the item */}
-                            {/* <svg
+                            <svg
                               width="12"
                               height="14"
                               viewBox="-0.5 -0.5 12 14"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
-                              className="shrink-0 -ml-4 -mr-0.5 -mt-3 text-neutrallight-300 dark:text-borderdark-900 translate-x-[-2px]"
+                              className="shrink-0 -ml-4 -mr-0.5 -mt-3 text-neutrallight-300 dark:text-borderdark-900 translate-x-[-2.1px]"
                               aria-hidden
                             >
                               <path
@@ -558,7 +591,7 @@ export function CVView() {
                                 strokeWidth="1.2"
                                 strokeLinecap="round"
                               />
-                            </svg> */}
+                            </svg>
                             {/* Icon area — morphs from spinner to diploma/job */}
                             <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
                               {/* Spinner layer */}
