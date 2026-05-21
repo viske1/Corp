@@ -270,6 +270,19 @@ body {
   );
 }
 
+@keyframes cvNavFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
 .theme-morph-icon {
   opacity: 0;
   transform: scale(0.4);

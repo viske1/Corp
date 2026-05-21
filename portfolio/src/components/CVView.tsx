@@ -259,6 +259,33 @@ export function CVView() {
     }, 500);
   };
 
+  // Bump on each navigation — used as a key to re-trigger the content fade
+  const [navTick, setNavTick] = useState(0);
+
+  const navigateExpanded = (direction: 1 | -1) => {
+    setExpanded((prev) => {
+      if (!prev) return prev;
+      const nextIndex =
+        (prev.index + direction + EXPERIENCES.length) % EXPERIENCES.length;
+      const slotEl = itemSlotRefs.current[nextIndex];
+      // Anchor stays correct: use the new slot's rect so the close animation
+      // (and the hidden slot placeholder) line up with the new item.
+      const rect = slotEl?.getBoundingClientRect();
+      const nextAnchor = rect
+        ? {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height,
+          }
+        : prev.anchor;
+      return { index: nextIndex, anchor: nextAnchor };
+    });
+    // Reset measured height so the new content can grow/shrink the card
+    setExpandedTextHeight(0);
+    setNavTick((t) => t + 1);
+  };
+
   // Measure the expanded text height with ResizeObserver
   useEffect(() => {
     if (!expanded) return;
@@ -269,6 +296,25 @@ export function CVView() {
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
+  }, [expanded]);
+
+  // Keyboard navigation while an item is expanded
+  useEffect(() => {
+    if (!expanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        navigateExpanded(1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        navigateExpanded(-1);
+      } else if (e.key === "Escape") {
+        collapseItem();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
   // Reset to all spinners whenever we close
@@ -478,9 +524,17 @@ export function CVView() {
                               : ""
                           }`}
                           style={{
-                            transition: `background-color 200ms ${easing}`,
-                            visibility:
-                              expanded?.index === i ? "hidden" : "visible",
+                            opacity: expanded?.index === i ? 0 : 1,
+                            transform:
+                              expanded?.index === i
+                                ? "scale(0.96)"
+                                : "scale(1)",
+                            transition:
+                              expanded?.index === i
+                                ? `background-color 200ms ${easing}, opacity 0ms, transform 0ms`
+                                : `background-color 200ms ${easing}, opacity 500ms ${smoothEasing}, transform 500ms ${smoothEasing}`,
+                            pointerEvents:
+                              expanded?.index === i ? "none" : "auto",
                           }}
                         >
                           <div className="flex items-center gap-3">
@@ -685,6 +739,7 @@ export function CVView() {
               >
                 <div
                   aria-label="Précédent"
+                  onClick={() => navigateExpanded(-1)}
                   className="flex items-center gap-1 cursor-pointer"
                   style={{
                     opacity: expandedActive ? 1 : 0,
@@ -712,6 +767,7 @@ export function CVView() {
                 </div>
                 <div
                   aria-label="Suivant"
+                  onClick={() => navigateExpanded(1)}
                   className="flex items-center gap-1 cursor-pointer"
                   style={{
                     opacity: expandedActive ? 1 : 0,
@@ -754,7 +810,7 @@ export function CVView() {
                     ? expanded.anchor.width + 100
                     : expanded.anchor.width,
                   height: expandedActive
-                    ? expanded.anchor.height + expandedTextHeight + 32
+                    ? expanded.anchor.height + expandedTextHeight + 22
                     : expanded.anchor.height,
                   backdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
                   WebkitBackdropFilter: expandedActive
@@ -776,7 +832,13 @@ export function CVView() {
                     transition: `padding 500ms ${smoothEasing}`,
                   }}
                 >
-                  <div className="flex items-center gap-3">
+                  <div
+                    key={`header-${navTick}`}
+                    className="flex items-center gap-3"
+                    style={{
+                      animation: `cvNavFadeIn 320ms ${smoothEasing} both`,
+                    }}
+                  >
                     {/* Same icon area as the original slot — preserves current icon state */}
                     <div className="shrink-0 relative w-5 h-5 flex items-center justify-center">
                       {/* Spinner layer */}
@@ -866,7 +928,14 @@ export function CVView() {
                       transition: `opacity 500ms ${smoothEasing}, transform 500ms ${smoothEasing}`,
                     }}
                   >
-                    {exp.description.join(" ")}
+                    <div
+                      key={`desc-${navTick}`}
+                      style={{
+                        animation: `cvNavFadeIn 360ms ${smoothEasing} 60ms both`,
+                      }}
+                    >
+                      {exp.description.join(" ")}
+                    </div>
                   </div>
                 </div>
               </div>
