@@ -172,6 +172,9 @@ export function CVView() {
   const [openFolders, setOpenFolders] = useState<Set<number>>(
     () => new Set(FOLDERS.map((_, i) => i)),
   );
+  // Measured height of the expanded text content (so we know how much to grow the card)
+  const [expandedTextHeight, setExpandedTextHeight] = useState(0);
+  const expandedTextRef = useRef<HTMLDivElement | null>(null);
   // Per-folder hover indicator state
   const [hoverState, setHoverState] = useState<
     Record<
@@ -250,8 +253,23 @@ export function CVView() {
 
   const collapseItem = () => {
     setExpandedActive(false);
-    setTimeout(() => setExpanded(null), 500);
+    setTimeout(() => {
+      setExpanded(null);
+      setExpandedTextHeight(0);
+    }, 500);
   };
+
+  // Measure the expanded text height with ResizeObserver
+  useEffect(() => {
+    if (!expanded) return;
+    const el = expandedTextRef.current;
+    if (!el) return;
+    const update = () => setExpandedTextHeight(el.scrollHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [expanded]);
 
   // Reset to all spinners whenever we close
   useEffect(() => {
@@ -641,6 +659,8 @@ export function CVView() {
                 onClick={collapseItem}
                 style={{
                   background: "rgba(0, 0, 0, 0.45)",
+                  backdropFilter: "blur(1px)",
+                  WebkitBackdropFilter: "blur(1px)",
                   opacity: expandedActive ? 1 : 0,
                   transition: `opacity 500ms ${smoothEasing}`,
                 }}
@@ -661,10 +681,12 @@ export function CVView() {
                     ? expanded.anchor.width + 100
                     : expanded.anchor.width,
                   height: expandedActive
-                    ? expanded.anchor.height + 150
+                    ? expanded.anchor.height + expandedTextHeight + 32
                     : expanded.anchor.height,
                   backdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
-                  WebkitBackdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
+                  WebkitBackdropFilter: expandedActive
+                    ? "blur(16px)"
+                    : "blur(0px)",
                   transition: expandedActive
                     ? `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing}, border-color 500ms ${smoothEasing}, backdrop-filter 500ms ${smoothEasing}, -webkit-backdrop-filter 500ms ${smoothEasing}`
                     : `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing} 50ms, border-color 500ms ${smoothEasing} 50ms, backdrop-filter 500ms ${smoothEasing} 50ms, -webkit-backdrop-filter 500ms ${smoothEasing} 50ms`,
@@ -674,10 +696,10 @@ export function CVView() {
                 <div
                   className="flex flex-col"
                   style={{
-                    paddingLeft: expandedActive ? 16 : 32,
-                    paddingRight: expandedActive ? 16 : 8,
-                    paddingTop: expandedActive ? 16 : 8,
-                    paddingBottom: expandedActive ? 16 : 8,
+                    paddingLeft: expandedActive ? 20 : 32,
+                    paddingRight: expandedActive ? 20 : 8,
+                    paddingTop: expandedActive ? 20 : 8,
+                    paddingBottom: expandedActive ? 20 : 8,
                     transition: `padding 500ms ${smoothEasing}`,
                   }}
                 >
@@ -735,7 +757,16 @@ export function CVView() {
                         />
                       </div>
                     </div>
-                    <p className="flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] text-neutrallight-600 dark:text-neutraldark-600 truncate">
+                    <p
+                      className={`flex-1 min-w-0 text-[14px] font-medium tracking-[-0.15px] truncate ${
+                        expandedActive
+                          ? "text-neutrallight-900 dark:text-neutraldark-900"
+                          : "text-neutrallight-600 dark:text-neutraldark-600"
+                      }`}
+                      style={{
+                        transition: `color 500ms ${smoothEasing}`,
+                      }}
+                    >
                       {exp.title}
                     </p>
                     <span
@@ -746,6 +777,23 @@ export function CVView() {
                     >
                       {exp.period}
                     </span>
+                  </div>
+
+                  {/* Expanded description — measured for height calculation.
+                      Fixed width prevents reflow as the parent card animates its width. */}
+                  <div
+                    ref={expandedTextRef}
+                    className="pt-4 text-[14px] leading-[1.6] tracking-[-0.1px] text-neutrallight-700 dark:text-neutraldark-600"
+                    style={{
+                      width: 475,
+                      opacity: expandedActive ? 1 : 0.6,
+                      transform: expandedActive
+                        ? "translateY(0)"
+                        : "translateY(6px)",
+                      transition: `opacity 500ms ${smoothEasing}, transform 500ms ${smoothEasing}`,
+                    }}
+                  >
+                    {exp.description.join(" ")}
                   </div>
                 </div>
               </div>
