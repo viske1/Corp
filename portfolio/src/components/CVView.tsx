@@ -251,11 +251,15 @@ export function CVView() {
     });
   };
 
+  const [isCollapsing, setIsCollapsing] = useState(false);
+
   const collapseItem = () => {
     setExpandedActive(false);
+    setIsCollapsing(true);
     setTimeout(() => {
       setExpanded(null);
       setExpandedTextHeight(0);
+      setIsCollapsing(false);
     }, 500);
   };
 
@@ -530,7 +534,7 @@ export function CVView() {
                                 ? "scale(0.96)"
                                 : "scale(1)",
                             transition:
-                              expanded?.index === i
+                              expanded?.index === i || isCollapsing
                                 ? `background-color 200ms ${easing}, opacity 0ms, transform 0ms`
                                 : `background-color 200ms ${easing}, opacity 500ms ${smoothEasing}, transform 500ms ${smoothEasing}`,
                             pointerEvents:
