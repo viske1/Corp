@@ -164,6 +164,39 @@ export function CVView() {
   const [openFolders, setOpenFolders] = useState<Set<number>>(
     () => new Set(FOLDERS.map((_, i) => i)),
   );
+  // Per-folder hover indicator state
+  const [hoverState, setHoverState] = useState<
+    Record<
+      number,
+      { top: number; left: number; width: number; height: number } | null
+    >
+  >({});
+  const [hoverVisible, setHoverVisible] = useState<Record<number, boolean>>({});
+  const [hoverAnimate, setHoverAnimate] = useState<Record<number, boolean>>({});
+  const folderRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const updateHover = (folderIdx: number, target: HTMLElement) => {
+    const container = folderRefs.current[folderIdx];
+    if (!container) return;
+    const cBox = container.getBoundingClientRect();
+    const tBox = target.getBoundingClientRect();
+    const wasVisible = hoverVisible[folderIdx] ?? false;
+    setHoverAnimate((prev) => ({ ...prev, [folderIdx]: wasVisible }));
+    setHoverState((prev) => ({
+      ...prev,
+      [folderIdx]: {
+        top: tBox.top - cBox.top,
+        left: tBox.left - cBox.left,
+        width: tBox.width,
+        height: tBox.height,
+      },
+    }));
+    setHoverVisible((prev) => ({ ...prev, [folderIdx]: true }));
+  };
+
+  const clearHover = (folderIdx: number) => {
+    setHoverVisible((prev) => ({ ...prev, [folderIdx]: false }));
+  };
 
   const toggleFolder = (i: number) => {
     setOpenFolders((prev) => {
@@ -269,13 +302,41 @@ export function CVView() {
               return sum + itemHeight + panelExtra + 4; // 4 = gap-1
             }, 0) + 8; // +8 cushion for pt-1 of inner container + sub-pixel rounding
 
+          const hRect = hoverState[folderIdx];
+          const hVisible = hoverVisible[folderIdx] ?? false;
+          const hAnimate = hoverAnimate[folderIdx] ?? false;
+
           return (
-            <div key={folder.name} className="flex flex-col">
+            <div
+              key={folder.name}
+              className="flex flex-col relative"
+              ref={(el) => {
+                folderRefs.current[folderIdx] = el;
+              }}
+              onMouseLeave={() => clearHover(folderIdx)}
+            >
+              {/* Sliding hover indicator */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute rounded-xl bg-neutrallight-200/50 dark:bg-buttondark-900/40"
+                style={{
+                  top: hRect?.top ?? 0,
+                  left: hRect?.left ?? 0,
+                  width: hRect?.width ?? 0,
+                  height: hRect?.height ?? 0,
+                  opacity: hVisible && hRect ? 1 : 0,
+                  transition: hAnimate
+                    ? "all 120ms ease-out"
+                    : "opacity 100ms ease-out",
+                }}
+              />
+
               {/* Folder header */}
               <button
                 type="button"
                 onClick={() => toggleFolder(folderIdx)}
-                className="flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl cursor-pointer pointer-events-auto hover:bg-neutrallight-200/40 dark:hover:bg-buttondark-900/50 transition-colors duration-150"
+                onMouseEnter={(e) => updateHover(folderIdx, e.currentTarget)}
+                className="relative flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl cursor-pointer pointer-events-auto transition-colors duration-150"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -351,16 +412,17 @@ export function CVView() {
                       >
                         <div
                           onClick={() => toggleSelected(i)}
+                          onMouseEnter={(e) =>
+                            updateHover(folderIdx, e.currentTarget)
+                          }
                           className={`relative flex flex-col py-2 pr-2 pl-8 -ml-6 rounded-xl cursor-pointer pointer-events-auto ${
                             isSelected
                               ? "bg-neutrallight-200/50 dark:bg-buttondark-900/30"
-                              : "hover:bg-neutrallight-200/40 dark:hover:bg-buttondark-900/50"
+                              : ""
                           }`}
                           style={{
                             transition: `background-color 200ms ${easing}`,
                           }}
-                          // Border commented out for testing
-                          // className+= " border-[0.5px] border-neutrallight-300 dark:border-borderdark-900"
                         >
                           <div className="flex items-center gap-3">
                             {/* Tree branch — connects vertical line to the item */}
@@ -464,7 +526,7 @@ export function CVView() {
 
                             {/* Chevron down — far right */}
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
+                            {/* <img
                               src="/CorpIcon/chevron_down.svg"
                               alt=""
                               className="shrink-0 w-3.5 h-3.5 custom-icon opacity-60"
@@ -474,7 +536,7 @@ export function CVView() {
                                   : "rotate(0deg)",
                                 transition: `transform 200ms ${easing}`,
                               }}
-                            />
+                            /> */}
                           </div>
 
                           {/* Expansion panel — snippet wrapping the CodeBlock, inside the same clickable div */}
