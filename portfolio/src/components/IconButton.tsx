@@ -5,7 +5,12 @@ import { SpinnerLoader } from "./SpinnerLoader";
 import { CustomTooltip } from "./CustomTooltip";
 
 type ButtonType = "light" | "bordered" | "solid" | "flat";
-type ColorScheme = "primary" | "neutral" | "warning" | "destructive" | "success";
+type ColorScheme =
+  | "primary"
+  | "neutral"
+  | "warning"
+  | "destructive"
+  | "success";
 type Size = "xs" | "sm" | "md" | "lg";
 type TooltipPosition =
   | "top"
@@ -90,7 +95,7 @@ export function IconButton({
       return cn(
         "inline-block",
         buttonSizeClass,
-        "text-zinc font-medium text-xs leading-tight uppercase rounded-lg focus:outline-none custom-button-bg transition duration-150 ease-in-out flex items-center justify-center"
+        "text-zinc font-medium text-xs leading-tight uppercase rounded-lg focus:outline-none custom-button-bg transition duration-150 ease-in-out flex items-center justify-center",
       );
     }
 
@@ -99,15 +104,14 @@ export function IconButton({
       buttonSizeClass,
       "font-medium text-xs leading-tight uppercase cursor-pointer",
       "focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0",
-      "transition duration-150 ease-in-out flex items-center justify-center"
+      "transition duration-150 ease-in-out flex items-center justify-center",
     );
 
     const variants: Record<ButtonType, Record<ColorScheme, string>> = {
       light: {
         primary:
           "text-primarylight-900 dark:text-primarydark-900 hover:bg-primarylight-200 dark:hover:bg-primarydark-50 active:bg-primarylight-300 dark:active:bg-primarydark-300",
-        warning:
-          "text-warning-900 hover:bg-warning-100 active:bg-warning-200",
+        warning: "text-warning-900 hover:bg-warning-100 active:bg-warning-200",
         destructive:
           "text-destructive-900 dark:text-destructive-900 hover:bg-destructive-100 dark:hover:bg-destructive-100 active:bg-destructive-200 dark:active:bg-destructive-300",
         success:
@@ -162,12 +166,12 @@ export function IconButton({
       ? colorScheme === "primary"
         ? "svg-primary-filter"
         : colorScheme === "warning"
-        ? "svg-warning-filter"
-        : colorScheme === "destructive"
-        ? "svg-destructive-filter"
-        : colorScheme === "success"
-        ? "svg-success-filter"
-        : ""
+          ? "svg-warning-filter"
+          : colorScheme === "destructive"
+            ? "svg-destructive-filter"
+            : colorScheme === "success"
+              ? "svg-success-filter"
+              : ""
       : "";
 
   return (
@@ -185,7 +189,7 @@ export function IconButton({
           className={cn(
             buttonClasses,
             "button-component relative",
-            isInactive && "opacity-[0.7] cursor-not-allowed"
+            isInactive && "opacity-[0.7] cursor-not-allowed",
           )}
         >
           {isLoading ? (
@@ -213,7 +217,7 @@ export function IconButton({
                     (isDisabled || disabled) && "opacity-[0.5]",
                     solidIconFilter,
                     colorIconFilter,
-                    "custom-icon dark:opacity-100"
+                    "custom-icon dark:opacity-100",
                   )}
                 />
               )}

@@ -140,9 +140,10 @@ body {
     brightness(100%) contrast(101%);
 }
 
-/* svg-main: uses mask-image so the color is exactly --color-main-900 */
+/* svg-main: uses mask-image so the color is exactly --color-main-900.
+   In light mode, a darker shade is used for better contrast. */
 .svg-main {
-  background-color: var(--color-main-900);
+  background-color: #1f9d54;
   -webkit-mask-image: var(--svg-mask);
   mask-image: var(--svg-mask);
   -webkit-mask-repeat: no-repeat;
@@ -151,6 +152,10 @@ body {
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
+}
+
+.dark .svg-main {
+  background-color: var(--color-main-900);
 }
 
 .svg-warning-filter {
