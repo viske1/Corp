@@ -497,7 +497,7 @@ export function CVView() {
                     transform: isOpen ? "translateY(0)" : "translateY(-12px)",
                     filter: isOpen ? "blur(0px)" : "blur(4px)",
                     transition: isOpen
-                      ? `opacity 350ms ${easing} ${folderEnterDelay}ms, transform 400ms ${easing} ${folderEnterDelay}ms, filter 350ms ${easing} ${folderEnterDelay}ms, background-color 150ms ease-out`
+                      ? `opacity 100ms ${easing} ${folderEnterDelay}ms, transform 400ms ${easing} ${folderEnterDelay}ms, filter 100ms ${easing} ${folderEnterDelay}ms, background-color 150ms ease-out`
                       : `opacity 180ms ${easing} ${folderExitDelay}ms, transform 250ms ${easing} ${folderExitDelay}ms, filter 180ms ${easing} ${folderExitDelay}ms`,
                   }}
                 >
@@ -554,7 +554,7 @@ export function CVView() {
                           : "translateY(-12px)",
                         filter: isOpen ? "blur(0px)" : "blur(4px)",
                         transition: isOpen
-                          ? `opacity 350ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, transform 400ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, filter 350ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms`
+                          ? `opacity 100ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, transform 400ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms, filter 100ms ${easing} ${BASE_DELAY + (folderRowIndex + 1) * ITEM_STAGGER}ms`
                           : `opacity 180ms ${easing}, transform 250ms ${easing}, filter 180ms ${easing}`,
                       }}
                     />
@@ -584,7 +584,7 @@ export function CVView() {
                               : "translateY(-12px)",
                             filter: isOpen ? "blur(0px)" : "blur(4px)",
                             transition: isOpen
-                              ? `opacity 350ms ${easing} ${enterDelay}ms, transform 400ms ${easing} ${enterDelay}ms, filter 350ms ${easing} ${enterDelay}ms`
+                              ? `opacity 100ms ${easing} ${enterDelay}ms, transform 400ms ${easing} ${enterDelay}ms, filter 100ms ${easing} ${enterDelay}ms`
                               : `opacity 180ms ${easing} ${exitDelay}ms, transform 250ms ${easing} ${exitDelay}ms, filter 180ms ${easing} ${exitDelay}ms`,
                           }}
                         >
@@ -889,12 +889,57 @@ export function CVView() {
                     </span>
                   </div>
                 </div>
+                {/* Outer ring — soft bg + border that frames the card with padding */}
+                {(() => {
+                  const RING_PAD = 12;
+                  return (
+                    <div
+                      className={`fixed z-40 pointer-events-none rounded-[41px] border ${
+                        expandedActive
+                          ? "bg-white dark:bg-buttondark-900/50 border-neutrallight-300 dark:border-borderdark-900 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.18)] dark:shadow-none"
+                          : "bg-transparent border-transparent shadow-none"
+                      }`}
+                      style={{
+                        top:
+                          (expandedActive ? TARGET_TOP : expanded.anchor.top) -
+                          RING_PAD,
+                        left:
+                          (expandedActive
+                            ? expanded.anchor.left - 50
+                            : expanded.anchor.left) - RING_PAD,
+                        width:
+                          (expandedActive
+                            ? expanded.anchor.width + 100
+                            : expanded.anchor.width) +
+                          RING_PAD * 2,
+                        height:
+                          (expandedActive
+                            ? expanded.anchor.height + expandedTextHeight + 22
+                            : expanded.anchor.height) +
+                          RING_PAD * 2,
+                        opacity: expandedActive ? 1 : 0,
+                        transform: expandedActive ? "scale(1)" : "scale(0.92)",
+                        transformOrigin: "center center",
+                        backdropFilter: expandedActive
+                          ? "blur(12px)"
+                          : "blur(0px)",
+                        WebkitBackdropFilter: expandedActive
+                          ? "blur(12px)"
+                          : "blur(0px)",
+                        transition: expandedActive
+                          ? `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 400ms ${smoothEasing} 100ms, border-color 400ms ${smoothEasing} 100ms, opacity 400ms ${smoothEasing} 100ms, transform 500ms ${smoothEasing} 100ms, backdrop-filter 400ms ${smoothEasing} 100ms, -webkit-backdrop-filter 400ms ${smoothEasing} 100ms`
+                          : `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 200ms ${smoothEasing}, border-color 200ms ${smoothEasing}, opacity 220ms ${smoothEasing}, transform 260ms ${smoothEasing}, backdrop-filter 200ms ${smoothEasing}, -webkit-backdrop-filter 200ms ${smoothEasing}`,
+                      }}
+                    />
+                  );
+                })()}
+
                 {/* Expanded card — mirrors the original slot, animates only its position */}
                 <div
-                  className={`fixed z-40 rounded-4xl overflow-hidden border-[1px] ${
+                  className={`fixed z-40 rounded-4xl overflow-hidden ${
                     expandedActive
-                      ? "bg-white dark:bg-buttondark-900/40 border-neutrallight-300 dark:border-borderdark-900 shadow-[0_12px_20px_0px_rgba(0,0,0,0.08)] dark:shadow-none"
-                      : "bg-transparent border-transparent shadow-none"
+                      ? "bg-neutrallight-200/60 dark:bg-background/80 shadow-[0_12px_20px_0px_rgba(0,0,0,0.08)] dark:shadow-none"
+                      : "bg-transparent shadow-none"
                   }`}
                   style={{
                     top: expandedActive ? TARGET_TOP : expanded.anchor.top,
@@ -907,13 +952,9 @@ export function CVView() {
                     height: expandedActive
                       ? expanded.anchor.height + expandedTextHeight + 22
                       : expanded.anchor.height,
-                    backdropFilter: expandedActive ? "blur(16px)" : "blur(0px)",
-                    WebkitBackdropFilter: expandedActive
-                      ? "blur(16px)"
-                      : "blur(0px)",
                     transition: expandedActive
-                      ? `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing}, border-color 500ms ${smoothEasing}, backdrop-filter 500ms ${smoothEasing}, -webkit-backdrop-filter 500ms ${smoothEasing}`
-                      : `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing} 50ms, border-color 500ms ${smoothEasing} 50ms, backdrop-filter 500ms ${smoothEasing} 50ms, -webkit-backdrop-filter 500ms ${smoothEasing} 50ms`,
+                      ? `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing}`
+                      : `top 500ms ${smoothEasing}, left 500ms ${smoothEasing}, width 500ms ${smoothEasing}, height 500ms ${smoothEasing}, background-color 500ms ${smoothEasing} 50ms`,
                   }}
                 >
                   {/* Original slot content — exactly mirrors the list item */}
