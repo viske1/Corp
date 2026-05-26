@@ -26,10 +26,10 @@ const cn = (...classes: (string | false | undefined | null)[]) =>
 const getIconPath = (iconName: string) => `/CorpIcon/${iconName}.svg`;
 
 const SIZE_CLASSES: Record<Size, string> = {
-  xs: "text-[10px] tracking-[-0.17px] leading-none px-1.5 py-0.5 gap-1",
-  sm: "text-[11px] tracking-[-0.18px] leading-none px-2 py-0.5 gap-1",
-  md: "text-[12px] tracking-[-0.2px] leading-none px-2 py-1 gap-1.5",
-  lg: "text-[13px] tracking-[-0.3px] leading-none px-2 py-1 gap-1.5",
+  xs: "text-[10px] tracking-[-0.17px] leading-none px-1 py-[3px] gap-1",
+  sm: "text-[11px] tracking-[-0.18px] leading-none px-1 py-[3px] gap-1",
+  md: "text-[12px] tracking-[-0.2px] leading-none px-1.5 py-1 gap-1.5",
+  lg: "text-[13px] tracking-[-0.3px] leading-none px-1.5 py-1 gap-1.5",
 };
 
 const ICON_SIZE_CLASSES: Record<Size, string> = {
@@ -41,7 +41,7 @@ const ICON_SIZE_CLASSES: Record<Size, string> = {
 
 const ROUNDED_CLASSES: Record<Rounded, string> = {
   sm: "rounded-[4px]",
-  md: "rounded-[6px]",
+  md: "rounded-[7px]",
   full: "rounded-full",
 };
 

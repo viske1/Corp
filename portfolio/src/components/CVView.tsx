@@ -5,6 +5,7 @@ import { useView } from "./ViewContext";
 import { SpinnerLoader } from "./SpinnerLoader";
 import { CodeBlock } from "./CodeBlock";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { CustomBadge } from "./CustomBadge";
 
 const easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 // Aggressive decel near the end — smooth landing
@@ -14,6 +15,7 @@ type Experience = {
   title: string;
   period: string;
   description: string[];
+  badges?: string[];
 };
 
 type Folder = {
@@ -34,6 +36,7 @@ const FOLDERS: Folder[] = [
           "Mise en place d'une CI/CD complète avec GitHub Actions et déploiements canary.",
           "Encadrement de 3 développeurs juniors et revues de code quotidiennes.",
         ],
+        badges: ["Next.js", "TypeScript", "PostgreSQL"],
       },
       {
         title: "Lead Frontend — Studio Pixel",
@@ -190,8 +193,14 @@ export function CVView() {
   const [hoverVisible, setHoverVisible] = useState<Record<number, boolean>>({});
   const [hoverAnimate, setHoverAnimate] = useState<Record<number, boolean>>({});
   const folderRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  // Block hover indicator until the entry cascade has finished.
+  const [cascadeReady, setCascadeReady] = useState(false);
+  // Track the latest mouse position so we can resolve hover on the element
+  // currently under the cursor as soon as the cascade finishes.
+  const mousePosRef = useRef<{ x: number; y: number } | null>(null);
 
   const updateHover = (folderIdx: number, target: HTMLElement) => {
+    if (!cascadeReady) return;
     const container = folderRefs.current[folderIdx];
     if (!container) return;
     const cBox = container.getBoundingClientRect();
@@ -336,7 +345,100 @@ export function CVView() {
       setIcons(cachedResolvedIcons ?? EXPERIENCES.map(() => "spinner"));
       setSelectedIndices(new Set());
       setOpenFolders(new Set(FOLDERS.map((_, i) => i)));
+      setCascadeReady(false);
     }
+  }, [isOpen]);
+
+  // Track mouse position while the CV view is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const onMove = (e: MouseEvent) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [isOpen]);
+
+  // Enable hover indicator once the entry cascade has fully finished
+  useEffect(() => {
+    if (!isOpen) return;
+    const totalRows = FOLDERS.reduce((s, f) => s + 1 + f.items.length, 0);
+    const lastRowDelay = BASE_DELAY + (totalRows - 1) * ITEM_STAGGER;
+    // Match the longest per-row transition (transform 400ms) + small buffer
+    const totalCascadeMs = lastRowDelay + 400 + 50;
+    const t = setTimeout(() => {
+      setCascadeReady(true);
+      // If the cursor is already over an item/header, resolve hover now
+      // (the user may not move the mouse to retrigger onMouseEnter).
+      const pos = mousePosRef.current;
+      if (!pos) return;
+      const el = document.elementFromPoint(pos.x, pos.y) as HTMLElement | null;
+      if (!el) return;
+      // Walk up to find a registered slot or folder container
+      let node: HTMLElement | null = el;
+      while (node) {
+        // Match an item slot
+        const slotEntry = Object.entries(itemSlotRefs.current).find(
+          ([, ref]) => ref === node,
+        );
+        if (slotEntry) {
+          const i = Number(slotEntry[0]);
+          // Find which folder this item belongs to
+          let folderIdx = 0;
+          let count = 0;
+          for (let f = 0; f < FOLDERS.length; f++) {
+            if (i < count + FOLDERS[f].items.length) {
+              folderIdx = f;
+              break;
+            }
+            count += FOLDERS[f].items.length;
+          }
+          const folderEl = folderRefs.current[folderIdx];
+          if (folderEl) {
+            const cBox = folderEl.getBoundingClientRect();
+            const tBox = node.getBoundingClientRect();
+            setHoverAnimate((prev) => ({ ...prev, [folderIdx]: false }));
+            setHoverState((prev) => ({
+              ...prev,
+              [folderIdx]: {
+                top: tBox.top - cBox.top,
+                left: tBox.left - cBox.left,
+                width: tBox.width,
+                height: tBox.height,
+              },
+            }));
+            setHoverVisible((prev) => ({ ...prev, [folderIdx]: true }));
+          }
+          return;
+        }
+        // Match a folder header (button inside a folder container)
+        const folderEntry = Object.entries(folderRefs.current).find(
+          ([, ref]) => ref && node && ref.contains(node) && node.tagName === "BUTTON",
+        );
+        if (folderEntry) {
+          const folderIdx = Number(folderEntry[0]);
+          const folderEl = folderRefs.current[folderIdx];
+          if (folderEl) {
+            const cBox = folderEl.getBoundingClientRect();
+            const tBox = node.getBoundingClientRect();
+            setHoverAnimate((prev) => ({ ...prev, [folderIdx]: false }));
+            setHoverState((prev) => ({
+              ...prev,
+              [folderIdx]: {
+                top: tBox.top - cBox.top,
+                left: tBox.left - cBox.left,
+                width: tBox.width,
+                height: tBox.height,
+              },
+            }));
+            setHoverVisible((prev) => ({ ...prev, [folderIdx]: true }));
+          }
+          return;
+        }
+        node = node.parentElement;
+      }
+    }, totalCascadeMs);
+    return () => clearTimeout(t);
   }, [isOpen]);
 
   // Orchestrate the waves while open, using a pre-computed sequence
@@ -828,7 +930,7 @@ export function CVView() {
                   className="fixed z-50 flex flex-col gap-2 pointer-events-auto"
                   style={{
                     top: TARGET_TOP + cardFinalHeight / 2,
-                    left: cardLeft + cardWidth + 12,
+                    left: cardLeft + cardWidth + 24,
                     transform: "translateY(-50%)",
                   }}
                 >
@@ -896,7 +998,7 @@ export function CVView() {
                     <div
                       className={`fixed z-40 pointer-events-none rounded-[41px] border ${
                         expandedActive
-                          ? "bg-white dark:bg-buttondark-900/50 border-neutrallight-300 dark:border-borderdark-900 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.18)] dark:shadow-none"
+                          ? "bg-neutrallight-200 dark:bg-buttondark-900/50 border-neutrallight-300 dark:border-borderdark-900 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.18)] dark:shadow-none"
                           : "bg-transparent border-transparent shadow-none"
                       }`}
                       style={{
@@ -938,7 +1040,7 @@ export function CVView() {
                 <div
                   className={`fixed z-40 rounded-4xl overflow-hidden ${
                     expandedActive
-                      ? "bg-neutrallight-200/60 dark:bg-background/80 shadow-[0_12px_20px_0px_rgba(0,0,0,0.08)] dark:shadow-none"
+                      ? "bg-neutrallight-100 dark:bg-background/80"
                       : "bg-transparent shadow-none"
                   }`}
                   style={{
@@ -1069,12 +1171,35 @@ export function CVView() {
                     >
                       <div
                         key={`desc-${navTick}`}
+                        className="rounded-2xl border border-dashed border-neutrallight-400/30 dark:border-borderdark-800 p-3"
                         style={{
                           animation: `cvNavFadeIn 360ms ${smoothEasing} 60ms both`,
                         }}
                       >
                         {exp.description.join(" ")}
                       </div>
+
+                      {/* Badges row — slot for tech/skill tags below the text */}
+                      {exp.badges && exp.badges.length > 0 && (
+                        <div
+                          key={`badges-${navTick}`}
+                          className="flex flex-wrap gap-2 pt-3"
+                          style={{
+                            animation: `cvNavFadeIn 360ms ${smoothEasing} 120ms both`,
+                          }}
+                        >
+                          {exp.badges.map((b) => (
+                            <CustomBadge
+                              key={b}
+                              text={b}
+                              colorScheme="neutral"
+                              variant="bordered"
+                              size="sm"
+                              rounded="md"
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
