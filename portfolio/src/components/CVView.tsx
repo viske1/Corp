@@ -891,7 +891,7 @@ export function CVView() {
                 </div>
                 {/* Expanded card — mirrors the original slot, animates only its position */}
                 <div
-                  className={`fixed z-40 rounded-4xl overflow-hidden border-[0.5px] ${
+                  className={`fixed z-40 rounded-4xl overflow-hidden border-[1px] ${
                     expandedActive
                       ? "bg-white dark:bg-buttondark-900/40 border-neutrallight-300 dark:border-borderdark-900 shadow-[0_12px_20px_0px_rgba(0,0,0,0.08)] dark:shadow-none"
                       : "bg-transparent border-transparent shadow-none"

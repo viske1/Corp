@@ -124,7 +124,7 @@ export function DropdownContainer({
   return (
     <div
       className={[
-        "absolute h-auto bg-neutrallight-100 dark:bg-containerdark-900 rounded-[14px] border-[0.5px] border-neutrallight-300 dark:border-borderdark-900",
+        "absolute h-auto bg-neutrallight-100 dark:bg-containerdark-900 rounded-[14px] border-[1px] border-neutrallight-300 dark:border-borderdark-900",
         "transition-all duration-150 ease-out",
         originClass,
         isEntering ? visibleTransform : hiddenTransform,

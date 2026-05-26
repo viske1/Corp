@@ -56,13 +56,13 @@ const VARIANTS: Record<Variant, Record<ColorScheme, string>> = {
   },
   bordered: {
     neutral:
-      "bg-neutrallight-100 text-neutrallight-900 border-[0.5px] border-neutrallight-300 dark:bg-buttondark-900/70 dark:text-neutraldark-900 dark:border-buttonborderdark-900",
+      "bg-neutrallight-100 text-neutrallight-900 border-[1px] border-neutrallight-300 dark:bg-buttondark-900/70 dark:text-neutraldark-900 dark:border-buttonborderdark-900",
     success:
-      "bg-success-100 text-success-900 border-[0.5px] border-success-300 dark:border-success-300",
+      "bg-success-100 text-success-900 border-[1px] border-success-300 dark:border-success-300",
     warning:
-      "bg-warning-100 text-warning-900 border-[0.5px] border-warning-300 dark:border-warning-300",
+      "bg-warning-100 text-warning-900 border-[1px] border-warning-300 dark:border-warning-300",
     destructive:
-      "bg-destructive-100 text-destructive-900 border-[0.5px] border-destructive-300 dark:border-destructive-300",
+      "bg-destructive-100 text-destructive-900 border-[1px] border-destructive-300 dark:border-destructive-300",
   },
   filled: {
     neutral:

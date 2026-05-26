@@ -259,85 +259,85 @@ export function CodeLine({
 
       {/* Action button — absolute on the right so it doesn't push the bg */}
       {!hideActionButton && (
-      <div
-        ref={wrapperRef}
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
-        style={{
-          opacity: showButton ? 1 : 0,
-          transition: "opacity 150ms ease-out",
-          pointerEvents: showButton ? "auto" : "none",
-        }}
-      >
-        <IconButton
-          icon="more"
-          isCustomIcon
-          buttonType="light"
-          colorScheme="neutral"
-          size="sm"
-          onClick={() => setOpen((v) => !v)}
-        />
-
-        <DropdownContainer
-          isVisible={open}
-          position="bottom-right"
-          width="180px"
-          offsetY={6}
+        <div
+          ref={wrapperRef}
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
+          style={{
+            opacity: showButton ? 1 : 0,
+            transition: "opacity 150ms ease-out",
+            pointerEvents: showButton ? "auto" : "none",
+          }}
         >
-          <HoverList className="flex flex-col p-1">
-            <CustomButton
-              text="Copier"
-              buttonType="light"
-              colorScheme="neutral"
-              justify="start"
-              textAlign="left"
-              disableHoverBg
-              leftIconNode={<CopyIcon />}
-              onClick={handleCopy}
-              heightButton="h-[32px]"
-              fontWeight="medium"
-            />
-            <CustomButton
-              text="Mentionner"
-              buttonType="light"
-              colorScheme="neutral"
-              justify="start"
-              textAlign="left"
-              disableHoverBg
-              leftIconNode={<MentionIcon />}
-              onClick={handleMention}
-              heightButton="h-[32px]"
-              fontWeight="medium"
-            />
-            {status === "deleted" ? (
+          <IconButton
+            icon="more"
+            isCustomIcon
+            buttonType="light"
+            colorScheme="neutral"
+            size="sm"
+            onClick={() => setOpen((v) => !v)}
+          />
+
+          <DropdownContainer
+            isVisible={open}
+            position="bottom-right"
+            width="180px"
+            offsetY={6}
+          >
+            <HoverList className="flex flex-col p-1">
               <CustomButton
-                text="Restaurer"
+                text="Copier"
                 buttonType="light"
                 colorScheme="neutral"
                 justify="start"
                 textAlign="left"
                 disableHoverBg
-                leftIconNode={<RestoreIcon />}
-                onClick={handleRestore}
+                leftIconNode="copy.svg"
+                onClick={handleCopy}
                 heightButton="h-[32px]"
                 fontWeight="medium"
               />
-            ) : (
               <CustomButton
-                text="Supprimer"
+                text="Mentionner"
                 buttonType="light"
-                colorScheme="destructive"
+                colorScheme="neutral"
                 justify="start"
                 textAlign="left"
                 disableHoverBg
-                leftIconNode={<TrashIcon />}
-                onClick={handleDelete}
+                leftIconNode={<MentionIcon />}
+                onClick={handleMention}
                 heightButton="h-[32px]"
                 fontWeight="medium"
               />
-            )}
-          </HoverList>
-        </DropdownContainer>
-      </div>
+              {status === "deleted" ? (
+                <CustomButton
+                  text="Restaurer"
+                  buttonType="light"
+                  colorScheme="neutral"
+                  justify="start"
+                  textAlign="left"
+                  disableHoverBg
+                  leftIconNode={<RestoreIcon />}
+                  onClick={handleRestore}
+                  heightButton="h-[32px]"
+                  fontWeight="medium"
+                />
+              ) : (
+                <CustomButton
+                  text="Supprimer"
+                  buttonType="light"
+                  colorScheme="destructive"
+                  justify="start"
+                  textAlign="left"
+                  disableHoverBg
+                  leftIconNode={<TrashIcon />}
+                  onClick={handleDelete}
+                  heightButton="h-[32px]"
+                  fontWeight="medium"
+                />
+              )}
+            </HoverList>
+          </DropdownContainer>
+        </div>
       )}
     </div>
   );

@@ -66,7 +66,7 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50  ">
       <nav className="px-4 sm:px-6 lg:px-8">
         <div
-          className="flex items-center justify-between py-1 pl-1 pr-2 rounded-full dark:bg-containerdark-900 bg-neutrallight-100 border-[0.5px] border-neutrallight-300 dark:border-borderdark-900 shadow-[0_4px_6px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_18px_-2px_rgba(0,0,0,1)] translate-y-[84px] mx-auto"
+          className="flex items-center justify-between py-1 pl-1 pr-2 rounded-full dark:bg-containerdark-900 bg-neutrallight-100 border-[1px] border-neutrallight-300 dark:border-borderdark-900 shadow-[0_4px_6px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_18px_-2px_rgba(0,0,0,1)] translate-y-[84px] mx-auto"
           style={{
             width: isCV ? 20 : 608,
             opacity: isCV ? 0 : 1,

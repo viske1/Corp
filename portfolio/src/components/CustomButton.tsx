@@ -287,15 +287,15 @@ export function CustomButton({
       },
       bordered: {
         primary:
-          "bg-primarylight-50 dark:bg-primarydark-50 border-[0.5px] border-primarylight-300 dark:border-primarydark-300 text-primarylight-900 dark:text-primarydark-900 hover:bg-primarylight-100 dark:hover:bg-primarydark-100 active:bg-primarylight-200 dark:active:bg-primarydark-200 shadow-sm",
+          "bg-primarylight-50 dark:bg-primarydark-50 border-[1px] border-primarylight-300 dark:border-primarydark-300 text-primarylight-900 dark:text-primarydark-900 hover:bg-primarylight-100 dark:hover:bg-primarydark-100 active:bg-primarylight-200 dark:active:bg-primarydark-200 shadow-sm",
         destructive:
-          "bg-destructive-100 dark:bg-destructive-100 border-[0.5px] border-destructive-200 dark:border-destructive-200 text-destructive-900 dark:text-destructive-900 hover:bg-destructive-100 dark:hover:bg-destructive-100 active:bg-destructive-200 dark:active:bg-destructive-200",
+          "bg-destructive-100 dark:bg-destructive-100 border-[1px] border-destructive-200 dark:border-destructive-200 text-destructive-900 dark:text-destructive-900 hover:bg-destructive-100 dark:hover:bg-destructive-100 active:bg-destructive-200 dark:active:bg-destructive-200",
         warning:
-          "bg-warning-100 dark:bg-warning-100 border-[0.5px] border-warning-200 dark:border-warning-200 text-warning-900 dark:text-warning-900 hover:bg-warning-100 dark:hover:bg-warning-200 active:bg-warning-200 dark:active:bg-warning-200",
+          "bg-warning-100 dark:bg-warning-100 border-[1px] border-warning-200 dark:border-warning-200 text-warning-900 dark:text-warning-900 hover:bg-warning-100 dark:hover:bg-warning-200 active:bg-warning-200 dark:active:bg-warning-200",
         success:
-          "bg-success-100 dark:bg-success-100 border-[0.5px] border-success-200 dark:border-success-200 text-success-900 dark:text-success-900 hover:bg-success-100 dark:hover:bg-success-100 active:bg-success-200 dark:active:bg-success-200",
+          "bg-success-100 dark:bg-success-100 border-[1px] border-success-200 dark:border-success-200 text-success-900 dark:text-success-900 hover:bg-success-100 dark:hover:bg-success-100 active:bg-success-200 dark:active:bg-success-200",
         neutral:
-          "bg-neutrallight-100 dark:bg-buttondark-900/70 border-[0.5px] border-neutrallight-300 dark:border-buttonborderdark-900 text-neutrallight-900 dark:text-neutraldark-900 hover:border-neutrallight-300 dark:hover:border-buttonborderdark-900 hover:bg-neutrallight-200 dark:hover:bg-buttondark-900 active:bg-neutrallight-200 dark:active:bg-neutraldark-200 focus:bg-neutrallight-200 shadow-sm",
+          "bg-neutrallight-100 dark:bg-buttondark-900/70 border-[1px] border-neutrallight-300 dark:border-buttonborderdark-900 text-neutrallight-900 dark:text-neutraldark-900 hover:border-neutrallight-300 dark:hover:border-buttonborderdark-900 hover:bg-neutrallight-200 dark:hover:bg-buttondark-900 active:bg-neutrallight-200 dark:active:bg-neutraldark-200 focus:bg-neutrallight-200 shadow-sm",
       },
       solid: {
         primary:

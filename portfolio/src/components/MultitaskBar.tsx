@@ -75,7 +75,7 @@ export function MultitaskBar() {
         className="
           inline-flex items-center justify-center p-1 rounded-full relative
           bg-neutrallight-100/90 dark:bg-inputdark-900
-          border-[0.5px] border-neutrallight-300 dark:border-borderdark-900
+          border-[1px] border-neutrallight-300 dark:border-borderdark-900
           backdrop-blur-md
           shadow-[0_8px_24px_-6px_rgba(0,0,0,0.15)]
           dark:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.6)]
@@ -222,7 +222,7 @@ function ContactMorphPill({
   };
 
   const bgClass = isContact
-    ? "bg-neutrallight-100 dark:bg-containerdark-900 border-[0.5px] border-neutrallight-300 dark:border-borderdark-900"
+    ? "bg-neutrallight-100 dark:bg-containerdark-900 border-[1px] border-neutrallight-300 dark:border-borderdark-900"
     : showLabel
       ? "bg-neutrallight-200 dark:bg-buttondark-900"
       : "bg-transparent";
@@ -240,9 +240,9 @@ function ContactMorphPill({
         height: 28,
       }}
       className={`
-        relative inline-flex items-center py-1 pl-1 pr-1 rounded-full cursor-pointer select-none
+        relative inline-flex items-center py-1 pl-1 pr-1 rounded-full cursor-pointer select-none dark:ring-1 dark:ring-containerdark-900 shadow-sm
         ${bgClass}
-        transition-[background-color,width] duration-200
+        transition-[background-color,width] duration-100
       `}
     >
       {/* Icon "contact" — fades out when isContact */}
@@ -372,7 +372,7 @@ function ContactMorphPill({
           <img
             src="/CorpIcon/copy.svg"
             alt="Copier"
-            className="w-3.5 h-3.5 custom-icon"
+            className="w-4 h-4 custom-icon"
           />
         </button>
 
