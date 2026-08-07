@@ -506,13 +506,17 @@ export function CVView() {
       </div>
 
       <div
-        className="fixed inset-0 z-20 overflow-y-auto pointer-events-none flex items-center justify-center"
+        className={`fixed inset-0 z-20 flex items-center justify-center ${
+          isOpen
+            ? "overflow-y-auto pointer-events-auto"
+            : "overflow-hidden pointer-events-none"
+        }`}
         style={{
           opacity: isOpen ? 1 : 0,
+          visibility: isOpen ? "visible" : "hidden",
           transition: isOpen
-            ? `opacity 250ms ${easing} 250ms`
-            : `opacity 180ms ${easing}`,
-          pointerEvents: isOpen ? "auto" : "none",
+            ? `opacity 250ms ${easing} 250ms, visibility 0ms`
+            : `opacity 180ms ${easing}, visibility 0ms 180ms`,
         }}
       >
         <div className="w-full max-w-md mx-auto px-4 py-8 flex flex-col gap-2">
