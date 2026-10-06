@@ -104,7 +104,7 @@ export function Header() {
               }}
             >
               <CustomBadge
-                text="Working"
+                text="Product Designer"
                 colorScheme="neutral"
                 variant="flat"
                 rounded="full"
@@ -124,7 +124,7 @@ export function Header() {
               }}
             >
               <CustomBadge
-                text="En recherche"
+                text="Disponible · Full remote"
                 colorScheme="success"
                 variant="flat"
                 rounded="full"
