@@ -9,12 +9,12 @@ import {
 
 const SECTIONS = [
   {
-    title: "Plus de 3 ans de design, tant appris, tant à apprendre",
-    body: "Tout a commencé durant mes premières études supérieures en IUT informatique où je conçus mes premières interfaces, fonctionnelles mais où l'émotion était absente. Je réalisai que ma passion ne résidait pas uniquement dans la programmation algorithmique. C'est pourquoi j'ai suivi une voie plus hybride avec une école axée sur le digital général. J'ai principalement appris en faisant, plutôt qu'en suivant la théorie que l'on nous apprenait en cours. C'est de cette manière que je continue d'évoluer de jour en jour, de challenger mes idées au quotidien, de remettre en question mes designs, pour que l'on passe d'un produit utilisable à un produit indispensable. Depuis 2023, je design pour DJTAL System sur un TMS (Transport Management System). Créer quelque chose à partir de rien, que les gens trouvent utile, pratique, facile et inspirant, est ma plus grande motivation dans ce que je fais. J'ai l'impression d'avoir, pour l'instant, gratté la surface d'un monde aux milliers de possibilités.",
+    title: "4 ans de design et de code, tant appris, tant à apprendre",
+    body: "Tout a commencé en DUT informatique, où j'ai conçu mes premières interfaces : fonctionnelles, mais sans émotion. J'ai compris que ce qui m'animait, ce n'était pas seulement le code, mais ce qu'il permet de faire exister. J'ai donc choisi une voie hybride, et j'ai surtout appris en faisant. De 2022 à 2026, chez DJTAL System, j'ai conçu et développé les interfaces d'un TMS (Transport Management System) : comprendre le besoin métier, maquetter quand c'est utile, puis livrer moi-même en production, en m'appuyant sur l'IA pour passer du design au code sans rien perdre en route. Ce qui me motive : créer à partir de rien quelque chose que les gens trouvent utile, simple et inspirant.",
   },
   {
     title: "Ce en quoi je crois",
-    body: "Le design n'est pas de l'exécution. C'est du jugement. Après trois ans dans le métier, c'est le principe auquel je reviens toujours. N'importe qui peut produire un écran correct. Ce pour quoi on nous engage vraiment, c'est un point de vue — la décision de ce qui compte et de ce qui n'a pas sa place. Ce jugement s'exerce en deux temps. D'abord la fonction. Un produit doit servir un usage et résoudre un vrai problème, intelligemment. Cela veut dire guider plutôt que submerger, ne révéler la complexité que lorsqu'elle le mérite, croiser la recherche avec un vrai parti pris et concevoir des systèmes qui accompagnent la croissance au lieu de la freiner. Ensuite, la résonance. La fonction rend un produit utilisable ; l'émotion le rend aimé. C'est de là que viennent la confiance et la fidélité — et, très concrètement, l'avantage qu'aucun concurrent ne copie. En pratique, ça tient à peu de choses : une micro-interaction juste, un détail que personne n'avait demandé, un onboarding qui semble écrit pour une seule personne, un encouragement au bon moment. Utile et mémorable ne s'opposent pas. Tenir les deux, c'est tout le métier.",
+    body: "Le design, c'est du jugement : décider de ce qui compte et de ce qui n'a pas sa place. Et ce jugement ne s'arrête pas à la maquette, il se poursuit jusque dans le code, là où se jouent les vrais détails. D'abord la fonction : servir un usage réel, guider plutôt que submerger, ne révéler la complexité que lorsqu'elle le mérite. Ensuite la résonance : une micro-interaction juste, un détail que personne n'avait demandé, ce qui fait passer un produit d'utilisable à aimé. Utile et mémorable ne s'opposent pas. Tenir les deux, de la réflexion à la mise en production, c'est tout mon métier.",
   },
   // {
   //   title: "L'apprentissage par renforcement et les agents",
@@ -41,15 +41,18 @@ export default function Home() {
       <MainContent>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-[256px] pb-[200px] flex flex-col gap-12">
           <header className="flex flex-col">
+            <p className="font-sans font-medium text-[14px] leading-[18.9px] tracking-[-0.3px] text-neutrallight-700 dark:text-neutraldark-600 mb-4">
+              Clément Fradet — Product Designer & Design Engineer
+            </p>
             <h1 className="text-[44px] sm:text-[56px] leading-[1.05] font-semibold tracking-[-1.5px] text-neutrallight-900 dark:text-neutraldark-900 mb-[120px]">
-              Simplifier le complexe, façonner le mémorable, créer des
-              expériences qui durent.
+              Je conçois des interfaces métier complexes, de la réflexion au
+              code en production.
             </h1>
           </header>
 
           {SECTIONS.map((s, idx) => {
             const isStacked = idx === 1;
-            const stackedSplit = "Ce jugement s'exerce en deux temps.";
+            const stackedSplit = "D'abord la fonction";
             const [firstPart, secondPart] = isStacked
               ? (() => {
                   const i = s.body.indexOf(stackedSplit);
@@ -79,6 +82,10 @@ export default function Home() {
               </section>
             );
           })}
+
+          <footer className="font-sans font-medium text-[12px] tracking-[-0.2px] text-neutrallight-700 dark:text-neutraldark-600">
+            Site designé et développé par moi — Next.js, Tailwind.
+          </footer>
         </div>
       </MainContent>
       <CVView />
