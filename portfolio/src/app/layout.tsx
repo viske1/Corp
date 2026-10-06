@@ -20,9 +20,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio - Votre Nom",
+  title: "Clément Fradet — Product Designer & Design Engineer",
   description:
-    "Portfolio personnel présentant mes projets et compétences en développement web.",
+    "Product designer et design engineer : je conçois des interfaces métier complexes, de la réflexion au code en production. Disponible en full remote.",
 };
 
 type Props = {
