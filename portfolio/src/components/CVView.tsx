@@ -65,7 +65,7 @@ const FOLDERS: Folder[] = [
         description: ["Digital Campus, Lyon."],
       },
       {
-        title: "DUT Information",
+        title: "DUT Informatique",
         period: "2017 - 2019",
         description: ["IUT Lyon 1, Bourg-en-Bresse."],
       },
