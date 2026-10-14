@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   CVView,
   Header,
@@ -6,6 +7,15 @@ import {
   ProgressiveBlur,
   ViewProvider,
 } from "@/components";
+
+const PROJECTS = [
+  {
+    name: "Nestor",
+    tagline: "Assistant juridique voix-first pour conducteurs routiers.",
+    cover: "/nestor_cover.png",
+    href: "/projects/nestor",
+  },
+];
 
 const SECTIONS = [
   {
@@ -49,6 +59,35 @@ export default function Home() {
               code en production.
             </h1>
           </header>
+
+          <section className="flex flex-col gap-6">
+            <h2 className="text-[28px] font-medium tracking-[-1px] text-neutrallight-900 dark:text-neutraldark-900 leading-8">
+              Projets
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {PROJECTS.map((p) => (
+                <Link
+                  key={p.name}
+                  href={p.href}
+                  className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-neutrallight-200 dark:bg-neutraldark-200 group cursor-pointer block"
+                >
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                    style={{ backgroundImage: `url(${p.cover})` }}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col gap-1">
+                    <h3 className="text-white text-[18px] font-semibold tracking-[-0.4px]">
+                      {p.name}
+                    </h3>
+                    <p className="text-white/80 text-[13px] font-medium tracking-[-0.2px]">
+                      {p.tagline}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
 
           {SECTIONS.map((s, idx) => {
             const isStacked = idx === 1;

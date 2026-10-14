@@ -291,7 +291,7 @@ export function CodeLine({
                 justify="start"
                 textAlign="left"
                 disableHoverBg
-                leftIconNode="copy.svg"
+                leftIconNode={<CopyIcon />}
                 onClick={handleCopy}
                 heightButton="h-[32px]"
                 fontWeight="medium"
