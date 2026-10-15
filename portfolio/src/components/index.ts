@@ -5,6 +5,7 @@ export { CustomBadge } from "./CustomBadge";
 export { ActionPill } from "./ActionPill";
 export { MultitaskBar } from "./MultitaskBar";
 export { ProgressiveBlur } from "./ProgressiveBlur";
+export { GridBackground } from "./GridBackground";
 export { CodeLine } from "./CodeLine";
 export type { LineStatus } from "./CodeLine";
 export { CodeBlock } from "./CodeBlock";

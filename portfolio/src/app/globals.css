@@ -311,3 +311,29 @@ body {
 .dark .theme-morph-icon[data-active="true"] {
   filter: brightness(0) invert(1) blur(0);
 }
+
+/* App-wide background grid — see GridBackground.tsx */
+.grid-background {
+  --grid-size: 48px;
+  --grid-thickness: 1.3px;
+  --grid-line: rgba(0, 0, 0, 0.03);
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid-line) var(--grid-thickness), transparent var(--grid-thickness)),
+    linear-gradient(to bottom, var(--grid-line) var(--grid-thickness), transparent var(--grid-thickness));
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: center center;
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 30%,
+    transparent 85%
+  );
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+}
+
+.dark .grid-background {
+  --grid-line: rgba(255, 255, 255, 0.02);
+}
