@@ -6,6 +6,11 @@ export { ActionPill } from "./ActionPill";
 export { MultitaskBar } from "./MultitaskBar";
 export { ProgressiveBlur } from "./ProgressiveBlur";
 export { GridBackground } from "./GridBackground";
+export {
+  PageTransition,
+  TransitionLink,
+  usePageTransition,
+} from "./PageTransition";
 export { CodeLine } from "./CodeLine";
 export type { LineStatus } from "./CodeLine";
 export { CodeBlock } from "./CodeBlock";

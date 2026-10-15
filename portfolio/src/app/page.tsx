@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {
   CVView,
   Header,
   MainContent,
   MultitaskBar,
   ProgressiveBlur,
+  TransitionLink,
   ViewProvider,
 } from "@/components";
 
@@ -66,7 +66,7 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {PROJECTS.map((p) => (
-                <Link
+                <TransitionLink
                   key={p.name}
                   href={p.href}
                   className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-neutrallight-200 dark:bg-neutraldark-200 group cursor-pointer block"
@@ -84,7 +84,7 @@ export default function Home() {
                       {p.tagline}
                     </p>
                   </div>
-                </Link>
+                </TransitionLink>
               ))}
             </div>
           </section>
