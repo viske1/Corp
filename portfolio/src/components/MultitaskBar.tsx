@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ActionPill } from "./ActionPill";
 import { useView } from "./ViewContext";
+import { chromeFade, usePageTransition } from "./PageTransition";
 
 const EMAIL = "clementfradet@gmail.com";
 
@@ -29,6 +30,7 @@ const ICON_BTN_WIDTH = 28;
 const GAP = 4;
 
 export function MultitaskBar() {
+  const { leaving } = usePageTransition();
   const { view, setView } = useView();
   const isCV = view === "cv";
   const [mode, setMode] = useState<"idle" | "contact">("idle");
@@ -70,7 +72,10 @@ export function MultitaskBar() {
   const barWidth = activeWidth > 0 ? activeWidth + PADDING_X : undefined;
 
   return (
-    <div className="fixed bottom-[94px] left-1/2 -translate-x-1/2 z-40">
+    <div
+      className="fixed bottom-[94px] left-1/2 -translate-x-1/2 z-40"
+      style={chromeFade(leaving)}
+    >
       <div
         className="
           inline-flex items-center justify-center p-1 rounded-full relative

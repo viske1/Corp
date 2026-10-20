@@ -7,6 +7,7 @@ export { MultitaskBar } from "./MultitaskBar";
 export { ProgressiveBlur } from "./ProgressiveBlur";
 export { GridBackground } from "./GridBackground";
 export {
+  PageContent,
   PageTransition,
   TransitionLink,
   usePageTransition,

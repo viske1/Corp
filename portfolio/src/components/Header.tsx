@@ -9,6 +9,7 @@ import { CustomButton } from "./CustomButton";
 import { HoverList } from "./HoverList";
 import { CustomBadge } from "./CustomBadge";
 import { useView } from "./ViewContext";
+import { chromeFade, usePageTransition } from "./PageTransition";
 
 const easing = "cubic-bezier(0.4, 0, 0.2, 1)";
 
@@ -29,6 +30,7 @@ const CheckIcon = () => (
 
 export function Header() {
   const { theme, setTheme } = useTheme();
+  const { leaving } = usePageTransition();
   const { view } = useView();
   const isCV = view === "cv";
 
@@ -63,7 +65,10 @@ export function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50  ">
+    <header
+      className="fixed top-0 left-0 right-0 z-50"
+      style={chromeFade(leaving)}
+    >
       <nav className="px-4 sm:px-6 lg:px-8">
         <div
           className="flex items-center justify-between py-1 pl-1 pr-2 rounded-full dark:bg-containerdark-900 bg-neutrallight-100 border-[1px] border-neutrallight-300 dark:border-borderdark-900 shadow-[0_4px_6px_-2px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_18px_-2px_rgba(0,0,0,1)] translate-y-[84px] mx-auto"

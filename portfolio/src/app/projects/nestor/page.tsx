@@ -1,14 +1,10 @@
-import type { CSSProperties } from "react";
 import Image from "next/image";
-import { TransitionLink } from "@/components";
+import { PageContent, TransitionLink } from "@/components";
 
 const SCREENS = Array.from({ length: 24 }, (_, i) => {
   const n = String(i + 1).padStart(2, "0");
   return `/nestor/nestor-${n}.png`;
 });
-
-// Cascade index for the `.reveal` entrance animation (see globals.css).
-const reveal = (i: number) => ({ "--i": i }) as CSSProperties;
 
 const MECANIQUES = [
   {
@@ -35,10 +31,9 @@ const MECANIQUES = [
 
 export default function NestorProject() {
   return (
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-[120px] pb-[200px] flex flex-col gap-16">
+    <PageContent className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-[120px] pb-[200px] flex flex-col gap-16">
       <TransitionLink
         href="/"
-        style={reveal(0)}
         className="reveal font-sans font-medium text-[13px] tracking-[-0.2px] text-neutrallight-700 dark:text-neutraldark-600 hover:text-neutrallight-900 dark:hover:text-neutraldark-900 transition-colors w-fit"
       >
         ← Retour
@@ -46,19 +41,16 @@ export default function NestorProject() {
 
       <header className="flex flex-col gap-6">
         <p
-          style={reveal(1)}
           className="reveal font-sans font-medium text-[13px] tracking-[-0.2px] text-neutrallight-700 dark:text-neutraldark-600 uppercase"
         >
           Projet · Mobile · 2026
         </p>
         <h1
-          style={reveal(2)}
           className="reveal text-[44px] sm:text-[56px] leading-[1.05] font-semibold tracking-[-1.5px] text-neutrallight-900 dark:text-neutraldark-900"
         >
           Nestor — l'assistant juridique voix-first des conducteurs routiers.
         </h1>
         <p
-          style={reveal(3)}
           className="reveal font-sans font-medium text-[16px] leading-[1.6] tracking-[-0.3px] text-neutrallight-700 dark:text-neutraldark-600"
         >
           Une réponse juridique fiable en quelques secondes, depuis un quai ou
@@ -66,7 +58,7 @@ export default function NestorProject() {
         </p>
       </header>
 
-      <section style={reveal(4)} className="reveal flex flex-col gap-4">
+      <section className="reveal flex flex-col gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           Le besoin
         </h2>
@@ -80,7 +72,7 @@ export default function NestorProject() {
         </p>
       </section>
 
-      <section style={reveal(5)} className="reveal flex flex-col gap-4">
+      <section className="reveal flex flex-col gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           L'utilisateur cible
         </h2>
@@ -96,7 +88,7 @@ export default function NestorProject() {
         </p>
       </section>
 
-      <section style={reveal(6)} className="reveal flex flex-col gap-6">
+      <section className="reveal flex flex-col gap-6">
         <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           Les cinq mécaniques
         </h2>
@@ -114,7 +106,7 @@ export default function NestorProject() {
         </div>
       </section>
 
-      <section style={reveal(7)} className="reveal flex flex-col gap-4">
+      <section className="reveal flex flex-col gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           Identité & direction visuelle
         </h2>
@@ -131,7 +123,7 @@ export default function NestorProject() {
         </p>
       </section>
 
-      <section style={reveal(8)} className="reveal flex flex-col gap-4">
+      <section className="reveal flex flex-col gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           Contraintes d'usage
         </h2>
@@ -142,15 +134,15 @@ export default function NestorProject() {
         </p>
       </section>
 
-      <section style={reveal(9)} className="reveal flex flex-col gap-6">
-        <h2 className="text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
+      <section className="flex flex-col gap-6">
+        <h2 className="reveal text-[22px] font-medium tracking-[-0.6px] text-neutrallight-900 dark:text-neutraldark-900">
           Écrans
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {SCREENS.map((src, i) => (
             <div
               key={src}
-              className="relative aspect-[9/19.5] rounded-xl overflow-hidden bg-neutrallight-200 dark:bg-neutraldark-200"
+              className="reveal relative aspect-[9/19.5] rounded-xl overflow-hidden bg-neutrallight-200 dark:bg-neutraldark-200"
             >
               <Image
                 src={src}
@@ -163,6 +155,6 @@ export default function NestorProject() {
           ))}
         </div>
       </section>
-    </main>
+    </PageContent>
   );
 }
